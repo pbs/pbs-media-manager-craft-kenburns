@@ -30,7 +30,7 @@
   "extra": {
     "handle": "mediamanager",
     "name": "Media Manager",
-    "documentationUrl": "https://github.com/pbs/pbs-media-manager-craft-kenburns/blob/main/README.md",
+    "documentationUrl": "https://github.com/pbs/pbs-media-manager-craft-plugin/blob/main/README.md",
     "class": "papertiger\\mediamanager\\MediaManager"
   }
 }
