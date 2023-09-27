@@ -16,7 +16,6 @@ use craft\base\Component;
 use papertiger\mediamanager\MediaManager;
 use papertiger\mediamanager\records\Show as ShowRecord;
 
-
 class Show extends Component
 {
     // Public Methods

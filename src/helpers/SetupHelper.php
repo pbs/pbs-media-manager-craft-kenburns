@@ -30,5 +30,5 @@ class SetupHelper
     {
         // No Craft CMS API User removal
     }
-
+    
 }

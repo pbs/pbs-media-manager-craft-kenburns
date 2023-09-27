@@ -11,9 +11,9 @@
 namespace papertiger\mediamanager\helpers;
 
 use Craft;
+use craft\helpers\App;
 use Exception;
 use craft\elements\User;
-use craft\helpers\App;
 
 use papertiger\mediamanager\base\ConstantAbstract;
 use papertiger\mediamanager\helpers\SettingsHelper;
@@ -216,8 +216,8 @@ class SynchronizeHelper
             $changelogUrl = $changelogUrl . '?' . http_build_query( $changelogParams );
         }
 
-        $pbsApiUsername  = '';
-        $pbsApiPassword  = '';
+        $pbsApiUsername = '';
+        $pbsApiPassword = '';
 
         if( method_exists( 'Craft', 'parseEnv' ) ) {
 

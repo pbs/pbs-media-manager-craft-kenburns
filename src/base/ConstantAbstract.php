@@ -88,7 +88,7 @@ abstract class ConstantAbstract
     const DEFAULT_FIELD_LAYOUT  = [
         'Content' => [ 'thumbnail', 'duration', 'description' ],
         'Tags' => [ 'siteTags', 'film', 'topic' ] ,
-        'API' => [ 'mediaManagerId', 'mediaType', 'playerCode', 'displayPassportIcon', 'expirationStatus', 'lastSynced', 'season', 'episode' ]
+        'API' => [ 'mediaManagerId', 'mediaType', 'playerCode', 'displayPassportIcon', 'expirationStatus', 'lastSynced', 'season', 'episode', 'markedForDeletion' ]
     ];
 
     const DEFAULT_SHOW_FIELD_LAYOUT  = [
@@ -96,9 +96,9 @@ abstract class ConstantAbstract
         'API' => [ 'showMediaManagerId', 'showLastSynced' ]
     ];
 
-    const REQUIRED_SETTINGS = [ 
+    const REQUIRED_SETTINGS = [
         'mediaSection', 'mediaAssetVolume', 'mediaFieldGroup',
-        'apiBaseUrl', 'apiColumnFields', 
+        'apiBaseUrl', 'apiColumnFields',
         'fieldLayout', 'syncSchedule'
     ];
 

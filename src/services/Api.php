@@ -46,8 +46,8 @@ class Api extends Component
         self::$sectionMediaHandle     = SettingsHelper::get( 'mediaSection' );
         self::$sectionUsedMediaHandle = SettingsHelper::get( 'mediaUsedBySection' );
 
-        $pbsApiUsername  = '';
-        $pbsApiPassword  = '';
+        $pbsApiUsername = '';
+        $pbsApiPassword = '';
 
         if( method_exists( 'Craft', 'parseEnv' ) ) {
 
@@ -160,6 +160,16 @@ class Api extends Component
 
         return true;
     }
+		
+		public function getApiBaseUrl()
+		{
+			return self::$apiBaseUrl;
+		}
+		
+		public function getApiAuth()
+		{
+			return self::$apiAuth;
+		}
 
     public function runClean()
     {
@@ -241,7 +251,7 @@ class Api extends Component
                 $mediaManagerId = $entry[ 'mediaManagerId' ];
                 
                 if( array_key_exists( $mediaManagerId, $duplicateCounter ) ) {
-                    $duplicateCounter[ $mediaManagerId ]++; 
+                    $duplicateCounter[ $mediaManagerId ]++;
                 } else {
                     $duplicateCounter[ $mediaManagerId ] = 1;
                 }
@@ -317,8 +327,8 @@ class Api extends Component
 
     // Private Methods
     // =========================================================================
-     
-    private function runSynchronizeShow( $show, $forceRegenerateThumbnail ) 
+    
+    private function runSynchronizeShow( $show, $forceRegenerateThumbnail )
     {
         Craft::$app->queue->push( new MediaSync([
 
