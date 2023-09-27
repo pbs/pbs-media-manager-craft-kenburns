@@ -11,7 +11,11 @@
 namespace papertiger\mediamanager;
 
 use Craft;
+use craft\queue\Queue;
+use craft\web\Application;
 use Exception;
+use papertiger\mediamanager\jobs\ShowSync;
+use papertiger\mediamanager\variables\MediaManagerVariable;
 use yii\base\Event;
 use craft\base\Plugin;
 use craft\web\UrlManager;
@@ -31,6 +35,7 @@ use papertiger\mediamanager\helpers\DependencyHelper;
 use papertiger\mediamanager\behaviors\MediaBehavior;
 use papertiger\mediamanager\services\Api as ApiService;
 use papertiger\mediamanager\services\Show as ShowService;
+use papertiger\mediamanager\services\ScheduledSyncService;
 use papertiger\mediamanager\services\OldSettings as OldSettingsService;
 use papertiger\mediamanager\helpers\aftersavesettings\FieldLayoutHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ApiColumnFieldsHelper;
@@ -38,6 +43,15 @@ use papertiger\mediamanager\helpers\aftersavesettings\ShowFieldLayoutHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ShowApiColumnFieldsHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\OldSettingsHelper;
 
+/**
+ * Class MediaManager
+ * @package papertiger\mediamanager
+ * @property ApiService $api
+ * @property ShowService $show
+ * @property OldSettingsService $oldsettings
+ * @property ScheduledSyncService $scheduledSync
+ * @method SettingsModel getSettings()
+ */
 class MediaManager extends Plugin
 {
     // Static Properties
@@ -118,6 +132,11 @@ class MediaManager extends Plugin
             'label' => self::t( 'Synchronize' ),
             'url'   => 'mediamanager/synchronize'
         ];
+	
+	    $navigation[ 'subnav' ][ 'scheduler' ] = [
+		    'label' => self::t( 'Scheduler' ),
+		    'url'   => 'mediamanager/scheduler'
+	    ];
 
         if( SettingsHelper::get( 'mediaSection' ) ) {
 
@@ -172,6 +191,9 @@ class MediaManager extends Plugin
                 $event->rules[ 'mediamanager/synchronize/synchronize-single' ] = 'mediamanager/synchronize/synchronize-single';
                 $event->rules[ 'mediamanager/synchronize/synchronize-all' ]    = 'mediamanager/synchronize/synchronize-all';
                 $event->rules[ 'mediamanager/synchronize/synchronize-show-entries' ] = 'mediamanager/synchronize/synchronize-show-entries';
+								$event->rules[ 'mediamanager/scheduler'] = 'mediamanager/scheduled-sync/index';
+								$event->rules['mediamanager/scheduler/<scheduledSyncId:\d+>'] = 'mediamanager/scheduled-sync/edit';
+								$event->rules['mediamanager/scheduler/new'] = 'mediamanager/scheduled-sync/edit';
 
                 $event->rules[ 'mediamanager/clean' ] = 'mediamanager/synchronize/clean';
             }
@@ -202,6 +224,8 @@ class MediaManager extends Plugin
                 }
             }
         );
+				
+				
 
         // Before plugin uninstalled
         Event::on(
@@ -227,17 +251,37 @@ class MediaManager extends Plugin
                 $variable->attachBehaviors([
                     MediaBehavior::class,
                 ]);
+								$variable->set('mediamanager', MediaManagerVariable::class);
             }
         );
+	
+	    Event::on(
+		    Application::class,
+		    Application::EVENT_INIT,
+		    function (Event $event) {
+					$scheduledSyncService = MediaManager::$plugin->scheduledSync;
+			    $pushableSyncs = $scheduledSyncService->getPushableSyncs();
+					
+			    foreach ($pushableSyncs as $pushableSync) {
+				    Craft::$app->getQueue()->push(new ShowSync([
+					    'showId' => $pushableSync->showId,
+				    ]));
+						
+						$pushableSync->processed = 1;
+				    $scheduledSyncService->saveScheduledSync($pushableSync);
+			    }
+		    }
+	    );
     }
 
     private function registerPluginServices()
     {
         // Register service
         $this->setComponents([
-            'show'        => ShowService::class,
-            'api'         => ApiService::class,
-            'oldsettings' => OldSettingsService::class,
+            'show'          => ShowService::class,
+            'api'           => ApiService::class,
+            'oldsettings'   => OldSettingsService::class,
+	          'scheduledSync' => ScheduledSyncService::class,
         ]);
     }
 

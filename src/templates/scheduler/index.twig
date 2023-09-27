@@ -1,0 +1,47 @@
+{% extends '_layouts/cp' %}
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle( 'papertiger\\mediamanager\\assetbundles\\mediamanager\\MediaManagerAsset' ) %}
+{% do view.registerAssetBundle( 'papertiger\\mediamanager\\assetbundles\\synchronizecpsection\\SynchronizeCPSectionAsset' ) %}
+
+{% set title              = 'Scheduler' %}
+{% set pluginCpUrl        = url( 'mediamanager' ) %}
+{% set selectedSubnavItem = 'scheduler' %}
+{% set crumbs             = [ { label: 'Media Manager', url: url( pluginCpUrl ) } ] %}
+
+{% block content %}
+	<h2>Scheduled Syncs</h2>
+
+	<table class="data fullwidth">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Show</th>
+				<th>Description</th>
+				<th>Scheduled for</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for scheduledSync in scheduledSyncs %}
+			{% set show = craft.mediamanager.getShow(scheduledSync.showId) %}
+			<tr>
+				<td>
+					<a href="{{ scheduledSync.getCpEditUrl() }}">{{ scheduledSync.name }}</a>
+				</td>
+				<td>{{ show.name }}</td>
+				<td>{{ scheduledSync.description }}</td>
+				<td>{{ scheduledSync.scheduleDate|datetime('M d, Y g:ia e') }}</td>
+
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
+
+{% block actionButton %}
+	<div id="extra-headers">
+		<div class="buttons right">
+			<a href="{{ url('mediamanager/scheduler/new') }}" class="btn submit add icon">{{ "New scheduled sync"|t('mediamanager') }}</a>
+		</div>
+	</div>
+{% endblock %}

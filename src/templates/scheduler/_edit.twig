@@ -1,0 +1,98 @@
+{% extends '_layouts/cp' %}
+{% import '_includes/forms' as forms %}
+
+{% do view.registerAssetBundle( 'papertiger\\mediamanager\\assetbundles\\mediamanager\\MediaManagerAsset' ) %}
+{% do view.registerAssetBundle( 'papertiger\\mediamanager\\assetbundles\\synchronizecpsection\\SynchronizeCPSectionAsset' ) %}
+
+{% set selectedSubnavItem = 'scheduler' %}
+{% set fullPageForm = true %}
+
+{% set crumbs = [
+	{ label: 'Media Manager', url: url('mediamanager') },
+	{ label: 'Scheduler'|t('mediamanager'), url: url('mediamanager/scheduler') },
+] %}
+
+{% block content %}
+	<input type="hidden" name="action" value="mediamanager/scheduled-sync/save-scheduled-sync">
+	{{ redirectInput('mediamanager/scheduler') }}
+	{% if scheduledSync.id %}<input type="hidden" name="scheduledSyncId" value="{{ scheduledSync.id }}">{% endif %}
+
+	<div id="scheduled-sync-settings">
+		{{ forms.textField({
+			first: true,
+			label: 'Name'|t('mediamanager'),
+			id: 'name',
+			name: 'name',
+			value: scheduledSync.name,
+			errors: scheduledSync.getErrors('name'),
+			autofocus: true,
+			required: true,
+			translatable: true
+		}) }}
+
+		{{ forms.textareaField({
+			label: 'Description'|t('mediamanager'),
+			id: 'description',
+			name: 'description',
+			value: scheduledSync.description,
+			errors: scheduledSync.getErrors('description'),
+		}) }}
+
+		{{ forms.dateTimeField({
+			id: 'scheduleDate',
+			name: 'scheduleDate',
+			value: scheduledSync.scheduleDate,
+			errors: scheduledSync.getErrors('scheduleDate'),
+			label: 'Schedule Date'|t('mediamanager'),
+			required: true,
+			allowPastDates: false,
+			allowFutureDates: true,
+			allowTime: true,
+			details: 'The date and time to run the sync.'|t('mediamanager'),
+		}) }}
+
+		{{  forms.hidden({
+			name: 'processed',
+			value: 0,
+		}) }}
+
+{#		{% set datetimeInput %}#}
+{#			{{ forms.date({#}
+{#				name: 'scheduleDate',#}
+{#				value: scheduledSync.scheduleDate ?? now,#}
+{#			}) }}#}
+{#			{{ forms.time({#}
+{#				name: 'scheduleDate',#}
+{#				value: scheduledSync.scheduleTime ?? now,#}
+{#			}) }}#}
+{#			{{ forms.timeZone({#}
+{#				name: 'scheduleDate',#}
+{#				value: scheduledSync.scheduleTime ?? craft.app.getTimeZone(),#}
+{#			}) }}#}
+{#		{% endset %}#}
+
+{#		{{ forms.field({#}
+{#			label: 'Schedule Date'|t('mediamanager'),#}
+{#			errors: scheduledSync.getErrors('scheduleDate'),#}
+{#			required: true,#}
+{#			details: 'The date and time to run the sync.'|t('mediamanager'),#}
+{#		}, datetimeInput) }}#}
+
+		{% set showOptions = [] %}
+		{% for show in shows %}
+			{% set showOptions = showOptions|merge([{label: show.name, value: show.id}]) %}
+		{% endfor %}
+
+		{{ forms.selectField({
+			id: 'showId',
+			name: 'showId',
+			value: scheduledSync.showId,
+			errors: scheduledSync.getErrors('showId'),
+			label: 'Show to Sync'|t('mediamanager'),
+			required: true,
+			options: showOptions,
+		}) }}
+	</div>
+
+{% endblock %}
+
