@@ -122,6 +122,10 @@ class MediaSync extends BaseJob
 
             // Set field values based on API Column Fields on settings
             $apiColumnFields = SettingsHelper::get( 'apiColumnFields' );
+						
+						if($this->fieldsToSync === '*' || in_array('title', $this->fieldsToSync)) {
+								$entry->title = $assetAttributes->title;
+						}
 
             foreach( $apiColumnFields as $apiColumnField ) {
                 

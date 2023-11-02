@@ -80,7 +80,9 @@
                             required: false,
                         }) }}
 
-                        {% set fieldsToSyncMap = {} %}
+                        {% set fieldsToSyncMap = {
+                            'title': 'Title'
+                        } %}
 
                         {% for apiColumnField in apiColumnFields %}
                             {% set fieldsToSyncMap = fieldsToSyncMap|merge({(apiColumnField[0]): apiColumnField[2]}) %}
@@ -167,7 +169,9 @@
 
                     {% set apiColumnFields = craft.app.getPlugins().getPlugin( 'mediamanager' ).getSettings().apiColumnFields %}
 
-                    {% set fieldsToSyncMap = {} %}
+                    {% set fieldsToSyncMap = {
+                        'title': 'Title'
+                    } %}
 
                     {% for apiColumnField in apiColumnFields %}
                         {% set fieldsToSyncMap = fieldsToSyncMap|merge({(apiColumnField[0]): apiColumnField[2]}) %}
@@ -189,7 +193,9 @@
 
                     <div class="field first" id="group-field">
 
-                        {% set fieldsToSyncMap = {} %}
+                        {% set fieldsToSyncMap = {
+                            'title': 'Title'
+                        } %}
 
                         {% set apiColumnFields = craft.app.getPlugins().getPlugin( 'mediamanager' ).getSettings().showApiColumnFields %}
 
@@ -252,7 +258,9 @@
 
                             <hr>
 
-                            {% set fieldsToSyncMap = {} %}
+                            {% set fieldsToSyncMap = {
+                                'title': 'Title'
+                            } %}
 
                             {% for apiColumnField in apiColumnFields %}
                                 {% set fieldsToSyncMap = fieldsToSyncMap|merge({(apiColumnField[0]): apiColumnField[2]}) %}
