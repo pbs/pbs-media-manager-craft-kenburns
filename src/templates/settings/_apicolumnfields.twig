@@ -27,7 +27,7 @@
         options: allusers,
         errors: settings.getErrors( 'apiCraftUser' )
     }) }}
-    
+
     {{ forms.textField({
         required: true,
         name: 'apiBaseUrl',
@@ -49,8 +49,8 @@
         rows: settings.apiColumnFields,
         errors: settings.getErrors( 'apiColumnFields' ),
         cols: [
-            { 
-                heading: 'API Field', 
+            {
+                heading: 'API Field',
                 handle: 'apiField',
                 width: '20%',
                 type: 'select',
@@ -63,32 +63,32 @@
                         {"value":"slug","label":"slug"},{"value":"title","label":"title"},{"value":"title_sortable","label":"title_sortable"},{"value":"description_short","label":"description_short"},{"value":"description_long","label":"description_long"},{"value":"object_type","label":"object_type"},{"value":"premiered_on","label":"premiered_on"},{"value":"encored_on","label":"encored_on"},{"value":"is_excluded_from_dfp","label":"is_excluded_from_dfp"},{"value":"duration","label":"duration"},{"value":"content_rating","label":"content_rating"},{"value":"content_rating_descriptor","label":"content_rating_descriptor"},{"value":"can_embed_player","label":"can_embed_player"},{"value":"tags","label":"tags"},{"value":"language","label":"language"},{"value":"funder_message","label":"funder_message"},{"value":"images","label":"images"},{"value":"updated_at","label":"updated_at"},{"value":"countries","label":"countries"},{"value":"geo_profile","label":"geo_profile"},{"value":"topics","label":"topics"},{"value":"platforms","label":"platforms"},{"value":"player_code","label":"player_code"},{"value":"availabilities","label":"availabilities"},{"value":"related_links","label":"related_links"},{"value":"related_promos","label":"related_promos"},{"value":"parent_tree","label":"parent_tree"},{"value":"has_captions","label":"has_captions"}
                 ]
             },
-            { 
-                heading: 'Use existing Craft Field', 
+            {
+                heading: 'Use existing Craft Field',
                 handle: 'existingField',
                 info: 'If selected, you dont need to fill <strong>Craft Field Name</strong>, <strong>Craft Field Handle</strong> and <strong>Craft Field Type</strong>.',
                 width: '20%',
                 type: 'select',
                 options: existingFields
             },
-            { 
-                heading: 'Craft Field Name', 
+            {
+                heading: 'Craft Field Name',
                 handle: 'fieldName',
                 info: 'If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
                 type: 'singleline',
                 placeholder: 'Field Name'
             },
-            { 
-                heading: 'Craft Field Handle', 
+            {
+                heading: 'Craft Field Handle',
                 handle: 'fieldHandle',
                 info: 'Make sure field handle is in camelCase format and unique, existing field with same Field Handle will be used if found. If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
                 type: 'singleline',
                 placeholder: 'Field Name'
             },
-            { 
-                heading: 'Craft Field Type', 
+            {
+                heading: 'Craft Field Type',
                 handle: 'fieldType',
                 info: 'If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
@@ -113,45 +113,77 @@
         rows: settings.showApiColumnFields,
         errors: settings.getErrors( 'showApiColumnFields' ),
         cols: [
-            { 
-                heading: 'API Field', 
+            {
+                heading: 'API Field',
                 handle: 'apiField',
                 width: '20%',
                 type: 'select',
                 options: [
                     {"label":"— Select Field —"},
-                    {"optgroup":"Special Field","label":"Special Field"},
-                        {"value":"show_images","label":"Images"},{"value":"show_last_synced","label":"Last Synced"},{"value":"show_media_manager_id","label":"Media Manager ID"},
-                    {"optgroup":"From PBS API","label":"From PBS API"},
-                        {"value":"description_short","label":"description_short"},{"value":"description_long","label":"description_long"}
+                    {
+                        "optgroup":"Special Field",
+                        "label":"Special Field"
+                    },
+                    {
+                        "value":"show_images",
+                        "label":"Images"
+                    },
+                    {
+                        "value":"show_last_synced",
+                        "label":"Last Synced"
+                    },
+                    {
+                        "value":"show_media_manager_id",
+                        "label":"Media Manager ID"
+                    },
+                    {
+                        "optgroup":"From PBS API",
+                        "label":"From PBS API"
+                    },
+                    {
+                        "value":"description_short",
+                        "label":"description_short"
+                    },
+                    {
+                        "value":"description_long",
+                        "label":"description_long"
+                    },
+                    {
+                        "value":"show_site_url",
+                        "label":"Show Site URL"
+                    },
+                    {
+                        "value":"available_for_purchase",
+                        "label":"Available for Purchase"
+                    }
                 ]
             },
-            { 
-                heading: 'Use existing Craft Field', 
+            {
+                heading: 'Use existing Craft Field',
                 handle: 'existingField',
                 info: 'If selected, you dont need to fill <strong>Craft Field Name</strong>, <strong>Craft Field Handle</strong> and <strong>Craft Field Type</strong>.',
                 width: '20%',
                 type: 'select',
                 options: existingFields
             },
-            { 
-                heading: 'Craft Field Name', 
+            {
+                heading: 'Craft Field Name',
                 handle: 'fieldName',
                 info: 'If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
                 type: 'singleline',
                 placeholder: 'Field Name'
             },
-            { 
-                heading: 'Craft Field Handle', 
+            {
+                heading: 'Craft Field Handle',
                 handle: 'fieldHandle',
                 info: 'Make sure field handle is in camelCase format and unique, existing field with same Field Handle will be used if found. If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
                 type: 'singleline',
                 placeholder: 'Field Name'
             },
-            { 
-                heading: 'Craft Field Type', 
+            {
+                heading: 'Craft Field Type',
                 handle: 'fieldType',
                 info: 'If <strong>Use existing Craft Field</strong> selected, you dont need to fill this field since it will be ignored.',
                 width: '20%',
