@@ -98,6 +98,13 @@
 			$scheduledSync->scheduleDate = DateTimeHelper::toDateTime($scheduledSync->scheduleDate);
 			$scheduledSync->showId = $request->getBodyParam('showId');
 			
+			$mediaFieldsToSync = $request->getBodyParam('mediaFieldsToSync');
+			$showFieldsToSync = $request->getBodyParam('showFieldsToSync');
+			
+			$scheduledSync->mediaFieldsToSync = $mediaFieldsToSync === '*' ? '*' : join(',', $mediaFieldsToSync);
+			$scheduledSync->showFieldsToSync = $showFieldsToSync === '*' ? '*' : join(',', $showFieldsToSync);
+			$scheduledSync->regenerateThumbnail = $request->getBodyParam('forceRegenerateThumbnail') ?? false;
+			
 			if(!MediaManager::getInstance()->scheduledSync->saveScheduledSync($scheduledSync)) {
 				Craft::$app->getSession()->setError(Craft::t('mediamanager', 'Couldn’t save scheduled sync.'));
 				Craft::$app->getUrlManager()->setRouteParams([

@@ -26,6 +26,9 @@
 	 * @property int $id ID
 	 * @property DateTime $scheduleDate Schedule Date
 	 * @property bool $processed Processed
+	 * @property string $mediaFieldsToSync
+	 * @property string $showFieldsToSync
+	 * @property bool $regenerateThumbnail
 	 */
 	class ScheduledSyncRecord extends ActiveRecord
 	{

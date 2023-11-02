@@ -100,19 +100,19 @@ class Api extends Component
         return false;
     }
 
-    public function synchronizeShow( $show, $forceRegenerateThumbnail )
+    public function synchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync ): bool
     {
 
         if( !$show->apiKey ) {
             return false;
         }
 
-        $this->runSynchronizeShow( $show, $forceRegenerateThumbnail );
+        $this->runSynchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync );
 
         return true;
     }
 
-    public function synchronizeSingle( $apiKey, $siteId, $forceRegenerateThumbnail )
+    public function synchronizeSingle( $apiKey, $siteId, $forceRegenerateThumbnail, $fieldsToSync = '*' )
     {
 
         if( !$apiKey || !$siteId ) {
@@ -125,25 +125,26 @@ class Api extends Component
             'singleAssetKey' => $apiKey,
             'title'          => 'Single media asset',
             'auth'           => self::$apiAuth,
-            'forceRegenerateThumbnail' => $forceRegenerateThumbnail
+            'forceRegenerateThumbnail' => $forceRegenerateThumbnail,
+	          'fieldsToSync' => $fieldsToSync
         ]));
 
         return true;
     }
 
-    public function synchronizeAll( $shows, $forceRegenerateThumbnail )
+    public function synchronizeAll( $shows, $forceRegenerateThumbnail, $fieldsToSync = '*' )
     {
         foreach( $shows as $show ) {
             
             if( $show->apiKey ) {
-                $this->runSynchronizeShow( $show, $forceRegenerateThumbnail );
+                $this->runSynchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync );
             }
         }
 
         return true;
     }
 
-    public function synchronizeShowEntries( $shows )
+    public function synchronizeShowEntries( $shows, $fieldsToSync = '*' )
     {
         foreach( $shows as $show ) {
             
@@ -153,7 +154,8 @@ class Api extends Component
 
                     'apiKey'      => $show->apiKey,
                     'title'       => $show->name . ' (Show)',
-                    'auth'        => self::$apiAuth
+                    'auth'        => self::$apiAuth,
+	                  'fieldsToSync' => $fieldsToSync,
                 ]));
             }
         }
@@ -328,7 +330,7 @@ class Api extends Component
     // Private Methods
     // =========================================================================
     
-    private function runSynchronizeShow( $show, $forceRegenerateThumbnail )
+    private function runSynchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync = '*' )
     {
         Craft::$app->queue->push( new MediaSync([
 
@@ -338,7 +340,8 @@ class Api extends Component
             'apiKey'      => $show->apiKey,
             'title'       => $show->name . ' (Show)',
             'auth'        => self::$apiAuth,
-            'forceRegenerateThumbnail' => $forceRegenerateThumbnail
+            'forceRegenerateThumbnail' => $forceRegenerateThumbnail,
+	          'fieldsToSync' => $fieldsToSync
         ]));
 
         $seasons = $this->getSeasonsOfShow( $show->apiKey );
@@ -355,7 +358,8 @@ class Api extends Component
                 'apiKey'      => $season->id,
                 'title'       => $show->name . ' (Season ' . $season->attributes->ordinal . ')',
                 'auth'        => self::$apiAuth,
-                'forceRegenerateThumbnail' => $forceRegenerateThumbnail
+                'forceRegenerateThumbnail' => $forceRegenerateThumbnail,
+	              'fieldsToSync' => $fieldsToSync
             ]));
 
             $episodes = $this->getEpisodesOfShow( $season->id );
@@ -372,7 +376,8 @@ class Api extends Component
                     'apiKey'      => $episode->id,
                     'title'       => $episode->attributes->title . ' (Episode)',
                     'auth'        => self::$apiAuth,
-                    'forceRegenerateThumbnail' => $forceRegenerateThumbnail
+                    'forceRegenerateThumbnail' => $forceRegenerateThumbnail,
+	                  'fieldsToSync' => $fieldsToSync
                 ]));
             }
         }
@@ -391,7 +396,8 @@ class Api extends Component
                 'apiKey'      => $special->id,
                 'title'       => $special->attributes->title . ' (Special)',
                 'auth'        => self::$apiAuth,
-                'forceRegenerateThumbnail' => $forceRegenerateThumbnail
+                'forceRegenerateThumbnail' => $forceRegenerateThumbnail,
+	              'fieldsToSync' => $fieldsToSync
             ]));
         }
     }

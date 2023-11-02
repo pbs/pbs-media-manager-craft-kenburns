@@ -47,6 +47,11 @@ class ShowEntriesSync extends BaseJob
     public $title;
     public $auth;
     public $apiKey;
+	
+		/**
+		 * @var array|string
+		 */
+		public $fieldsToSync = '*';
 
 
     // Private Properties
@@ -86,6 +91,11 @@ class ShowEntriesSync extends BaseJob
         foreach( $apiColumnFields as $apiColumnField ) {
             
             $apiField = $apiColumnField[ 0 ];
+	
+		        // ensure the field to be updated from MM Settings is included in the fieldsToSync array
+		        if($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync) ) {
+			        continue;
+		        }
 
             switch( $apiField ) {
                 case 'show_images':
@@ -220,9 +230,9 @@ class ShowEntriesSync extends BaseJob
 
     // Private Methods
     // =========================================================================
-     
+    
     private function log( $message )
-    {   
+    {
         if( $this->logProcess ) {
             $log = date( 'Y-m-d H:i:s' ) .' '. $message . "\n";
             FileHelper::writeToFile( Craft::getAlias( $this->logFile ), $log, [ 'append' => true ] );

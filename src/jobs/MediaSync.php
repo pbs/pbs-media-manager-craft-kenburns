@@ -58,6 +58,12 @@ class MediaSync extends BaseJob
     public $singleAssetKey;
 
     public $forceRegenerateThumbnail;
+	
+	
+		/**
+		 * @var string|array
+		 */
+		public $fieldsToSync = '*';
 
     public $siteTags = [];
     public $filmTags = [];
@@ -120,7 +126,12 @@ class MediaSync extends BaseJob
             foreach( $apiColumnFields as $apiColumnField ) {
                 
                 $apiField = $apiColumnField[ 0 ];
-
+								
+								// ensure the field to be updated from MM Settings is included in the fieldsToSync array
+								if($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync) ) {
+									continue;
+								}
+							
                 switch( $apiField ) {
                     case 'thumbnail':
                     break;

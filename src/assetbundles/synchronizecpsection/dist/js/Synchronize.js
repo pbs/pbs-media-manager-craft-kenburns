@@ -14,10 +14,10 @@
             init: function() {
             	var self = this;
 
-                this.addListener($('#syncrhonizeshowbtn'), 'activate', 'synchronizeShow');
-                this.addListener($('#syncrhonizesinglebtn'), 'activate', 'synchronizeSingle');
-                this.addListener($('#syncrhonizeallbtn'), 'activate', 'synchronizeAll');
-                this.addListener($('#syncrhonizeshowentriesbtn'), 'activate', 'synchronizeShowEntries');
+                this.addListener($('#synchronizeshowbtn'), 'activate', 'synchronizeShow');
+                this.addListener($('#synchronize-single-button'), 'activate', 'synchronizeSingle');
+                this.addListener($('#synchronize-all-button'), 'activate', 'synchronizeAll');
+                this.addListener($('#synchronize-show-entries-button'), 'activate', 'synchronizeShowEntries');
                 this.addListener($('#addshowsite'), 'activate', 'addShowSite');
                 this.addListener($('#cleanallbtn'), 'activate', 'cleanGarbageEntries');
 
@@ -39,9 +39,9 @@
             },
 
             deleteShowSite: function( target ) {
-                
+
                 if( $( 'select[name="siteId[]"]' ).length > 1 ) {
-                    
+
                     target.remove();
                     return
                 }
@@ -85,15 +85,20 @@
             	var showId   = $( '#showId' ).val()
             	var name     = $( '#name' ).val()
                 var forceRegenerateThumbnail = $( '#forceRegenerateThumbnail' ).prop( 'checked' )
+                var fieldsToSync = [];
+                var fieldsToSyncInputs = $('input[name="fieldsToSync[]"]:checked').each(function(index, field){
+                    fieldsToSync.push($(field).val());
+                })
 
         		if( showId ) {
-                    
+
                     var data = {
                         showId: showId,
-                        forceRegenerateThumbnail: forceRegenerateThumbnail
+                        forceRegenerateThumbnail: forceRegenerateThumbnail,
+                        fieldsToSync: fieldsToSync,
                     };
 
-                    $( '#syncrhonizeshowbtn' ).addClass( 'disabled' );
+                    $( '#synchronizeshowbtn' ).addClass( 'disabled' );
 
                     Craft.postActionRequest('mediamanager/synchronize/synchronize-show', data, $.proxy(function(response, textStatus) {
 
@@ -105,16 +110,16 @@
                                 }, 1000);
                             }
                             else if (response.errors) {
-                            	$( '#syncrhonizeshowbtn' ).removeClass( 'disabled' );
+                            	$( '#synchronizeshowbtn' ).removeClass( 'disabled' );
                                 var errors = this.flattenErrors(response.errors);
                                 Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n") );
                             }
                             else {
-                            	$( '#syncrhonizeshowbtn' ).removeClass( 'disabled' );
+                            	$( '#synchronizeshowbtn' ).removeClass( 'disabled' );
                                 Craft.cp.displayError();
                             }
                         } else {
-                        	$( '#syncrhonizeshowbtn' ).removeClass( 'disabled' );
+                        	$( '#synchronizeshowbtn' ).removeClass( 'disabled' );
                         }
 
                     }, this));
@@ -135,6 +140,10 @@
             	var apiKey   = $( '#apiKey' ).val()
                 var siteId   = []
                 var forceRegenerateThumbnail = $( '#forceRegenerateThumbnail' ).prop( 'checked' )
+                var fieldsToSync = [];
+                var fieldsToSyncInputs = $('input[name="fieldsToSync[]"]:checked').each(function(index, field){
+                    fieldsToSync.push($(field).val());
+                })
 
                 $( 'select[name="siteId[]"]' ).each( function() {
 
@@ -146,14 +155,15 @@
                 })
 
         		if( apiKey && siteId ) {
-                    
+
                     var data = {
                         apiKey: apiKey,
                         siteId: siteId,
-                        forceRegenerateThumbnail: forceRegenerateThumbnail
+                        forceRegenerateThumbnail: forceRegenerateThumbnail,
+                        fieldsToSync: fieldsToSync,
                     };
 
-                    $( '#syncrhonizesinglebtn' ).addClass( 'disabled' );
+                    $( '#synchronize-single-button' ).addClass( 'disabled' );
 
                     Craft.postActionRequest('mediamanager/synchronize/synchronize-single', data, $.proxy(function(response, textStatus) {
 
@@ -165,16 +175,16 @@
                                 }, 1000);
                             }
                             else if (response.errors) {
-                            	$( '#syncrhonizesinglebtn' ).removeClass( 'disabled' );
+                            	$( '#synchronize-single-button' ).removeClass( 'disabled' );
                                 var errors = this.flattenErrors(response.errors);
                                 Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n") );
                             }
                             else {
-                            	$( '#syncrhonizesinglebtn' ).removeClass( 'disabled' );
+                            	$( '#synchronize-single-button' ).removeClass( 'disabled' );
                                 Craft.cp.displayError();
                             }
                         } else {
-                        	$( '#syncrhonizesinglebtn' ).removeClass( 'disabled' );
+                        	$( '#synchronize-single-button' ).removeClass( 'disabled' );
                         }
 
                     }, this));
@@ -186,11 +196,20 @@
 
             synchronizeAll: function() {
 
-                $( '#syncrhonizeallbtn' ).addClass( 'disabled' );
+                $( '#synchronize-all-button' ).addClass( 'disabled' );
 
                 var forceRegenerateThumbnail = $( '#forceRegenerateThumbnail' ).prop( 'checked' )
+                var fieldsToSync = [];
+                var fieldsToSyncInputs = $('input[name="fieldsToSync[]"]:checked').each(function(index, field){
+                    fieldsToSync.push($(field).val());
+                })
 
-                Craft.postActionRequest('mediamanager/synchronize/synchronize-all?forceRegenerateThumbnail=' + forceRegenerateThumbnail, {}, $.proxy(function(response, textStatus) {
+                var data = {
+                    forceRegenerateThumbnail: forceRegenerateThumbnail,
+                    fieldsToSync: fieldsToSync,
+                };
+
+                Craft.postActionRequest('mediamanager/synchronize/synchronize-all', data, $.proxy(function(response, textStatus) {
 
                     if (textStatus === 'success') {
                         if (response.success) {
@@ -200,16 +219,16 @@
                             }, 1000);
                         }
                         else if (response.errors) {
-                        	$( '#syncrhonizeallbtn' ).removeClass( 'disabled' );
+                        	$( '#synchronize-all-button' ).removeClass( 'disabled' );
                             var errors = this.flattenErrors(response.errors);
                             Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n") );
                         }
                         else {
-                        	$( '#syncrhonizeallbtn' ).removeClass( 'disabled' );
+                        	$( '#synchronize-all-button' ).removeClass( 'disabled' );
                             Craft.cp.displayError();
                         }
                     } else {
-                    	$( '#syncrhonizeallbtn' ).removeClass( 'disabled' );
+                    	$( '#synchronize-all-button' ).removeClass( 'disabled' );
                     }
 
                 }, this));
@@ -217,9 +236,18 @@
 
             synchronizeShowEntries: function() {
 
-                $( '#syncrhonizeshowentriesbtn' ).addClass( 'disabled' );
+                $( '#synchronize-show-entries-button' ).addClass( 'disabled' );
 
-                Craft.postActionRequest('mediamanager/synchronize/synchronize-show-entries', {}, $.proxy(function(response, textStatus) {
+                var fieldsToSync = [];
+                var fieldsToSyncInputs = $('input[name="fieldsToSync[]"]:checked').each(function(index, field){
+                    fieldsToSync.push($(field).val());
+                })
+
+                var data = {
+                    fieldsToSync: fieldsToSync,
+                };
+
+                Craft.postActionRequest('mediamanager/synchronize/synchronize-show-entries', data, $.proxy(function(response, textStatus) {
 
                     if (textStatus === 'success') {
                         if (response.success) {
@@ -229,16 +257,16 @@
                             }, 1000);
                         }
                         else if (response.errors) {
-                            $( '#syncrhonizeshowentriesbtn' ).removeClass( 'disabled' );
+                            $( '#synchronize-show-entries-button' ).removeClass( 'disabled' );
                             var errors = this.flattenErrors(response.errors);
                             Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n") );
                         }
                         else {
-                            $( '#syncrhonizeshowentriesbtn' ).removeClass( 'disabled' );
+                            $( '#synchronize-show-entries-button' ).removeClass( 'disabled' );
                             Craft.cp.displayError();
                         }
                     } else {
-                        $( '#syncrhonizeshowentriesbtn' ).removeClass( 'disabled' );
+                        $( '#synchronize-show-entries-button' ).removeClass( 'disabled' );
                     }
 
                 }, this));
