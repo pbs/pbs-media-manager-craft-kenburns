@@ -34,6 +34,16 @@ class ScheduledSyncModel extends BaseModel
 	public $showId;
 	
 	/**
+	 * @var string
+	 */
+	public $mediaFieldsToSync;
+	
+	/**
+	 * @var string
+	 */
+	public $showFieldsToSync;
+	
+	/**
 	 * @var DateTime Schedule Date
 	 */
 	public $scheduleDate;
@@ -42,6 +52,11 @@ class ScheduledSyncModel extends BaseModel
 	 * @var bool Processed
 	 */
 	public $processed;
+	
+	/**
+	 * @var bool
+	 */
+	public $regenerateThumbnail;
 	
 	public function __toString()
 	{
@@ -70,5 +85,18 @@ class ScheduledSyncModel extends BaseModel
 	{
 		return UrlHelper::cpUrl('mediamanager/scheduler/' . $this->id);
 	}
+	
+	/**
+	 * @return array|string
+	 */
+	public function getMediaFieldsToSync()
+	{
+		return $this->mediaFieldsToSync === '*' ? '*' : explode(',', $this->mediaFieldsToSync);
+	}
+	public function getShowFieldsToSync()
+	{
+		return $this->showFieldsToSync === '*' ? '*' : explode(',', $this->showFieldsToSync);
+	}
+	
 	
 }

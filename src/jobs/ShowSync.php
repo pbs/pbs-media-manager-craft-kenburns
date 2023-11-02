@@ -34,6 +34,16 @@
 		 */
 		public $showId;
 		
+		/**
+		 * @var int
+		 */
+		public $scheduledSync;
+		
+		/**
+		 * @var bool
+		 */
+		public $regenerateThumbnails;
+		
 		public $_show;
 		
 		// Public Methods
@@ -42,7 +52,12 @@
 		public function execute( $queue )
 		{
 			$show = $this->_getShow();
-			MediaManager::$plugin->api->synchronizeShow($show, false);
+			$scheduledSync = MediaManager::getInstance()->scheduledSync->getScheduledSyncById($this->scheduledSync);
+			$mediaFieldsToSync = $scheduledSync->getMediaFieldsToSync();
+			$showFieldsToSync = $scheduledSync->getShowFieldsToSync();
+			
+			MediaManager::$plugin->api->synchronizeShow($show, $this->regenerateThumbnails, $mediaFieldsToSync);
+			MediaManager::$plugin->api->synchronizeShowEntries([$show], $showFieldsToSync);
 		}
 		
 		// Protected Methods

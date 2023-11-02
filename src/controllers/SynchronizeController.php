@@ -121,7 +121,8 @@ class SynchronizeController extends Controller
         $showId  = $request->getBodyParam( 'showId' );
         $siteId  = $request->getBodyParam( 'siteId' );
         $forceRegenerateThumbnail  = $request->getBodyParam( 'forceRegenerateThumbnail' );
-
+				$fieldsToSync = $request->getBodyParam('fieldsToSync');
+				
         if( !$showId ) {
 
             return $this->asJson([
@@ -144,7 +145,7 @@ class SynchronizeController extends Controller
             ]);
         }
 
-        $synchronize = MediaManager::getInstance()->api->synchronizeShow( $show, $forceRegenerateThumbnail );
+        $synchronize = MediaManager::getInstance()->api->synchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync );
 
         return $this->asJson([
             'success' => true
@@ -158,6 +159,7 @@ class SynchronizeController extends Controller
         $apiKey  = $request->getBodyParam( 'apiKey' );
         $siteId  = $request->getBodyParam( 'siteId' );
         $forceRegenerateThumbnail = $request->getBodyParam( 'forceRegenerateThumbnail' );
+				$fieldsToSync = $request->getBodyParam('fieldsToSync');
 
         if( !$apiKey || !$siteId ) {
 
@@ -179,7 +181,7 @@ class SynchronizeController extends Controller
             }
         }
 
-        $synchronize = MediaManager::getInstance()->api->synchronizeSingle( $apiKey, $siteId, $forceRegenerateThumbnail );
+        $synchronize = MediaManager::getInstance()->api->synchronizeSingle( $apiKey, $siteId, $forceRegenerateThumbnail, $fieldsToSync );
 
         return $this->asJson([
             'success' => true
@@ -191,8 +193,9 @@ class SynchronizeController extends Controller
         $shows = MediaManager::getInstance()->show->getShow();
         $validatedShows = [];
         $request = Craft::$app->getRequest();
-        $forceRegenerateThumbnail  = $request->getQueryParam( 'forceRegenerateThumbnail' );
-
+	      $forceRegenerateThumbnail = $request->getBodyParam( 'forceRegenerateThumbnail' );
+				$fieldsToSync = $request->getBodyParam('fieldsToSync');
+	      
         foreach( $shows as $show ) {
             
             if( $show->apiKey && $show->name ) {
@@ -210,7 +213,7 @@ class SynchronizeController extends Controller
             ]);
         }
 
-        $synchronize = MediaManager::getInstance()->api->synchronizeAll( $validatedShows, $forceRegenerateThumbnail );
+        $synchronize = MediaManager::getInstance()->api->synchronizeAll( $validatedShows, $forceRegenerateThumbnail, $fieldsToSync );
 
         return $this->asJson([
             'success' => true
@@ -239,8 +242,10 @@ class SynchronizeController extends Controller
                 'errors' => [ 'No valid Show API Key registered, please register one.' ],
             ]);
         }
-
-        $synchronize = MediaManager::getInstance()->api->synchronizeShowEntries( $validatedShows );
+	
+	      $fieldsToSync = $request->getBodyParam('fieldsToSync');
+				
+        $synchronize = MediaManager::getInstance()->api->synchronizeShowEntries( $validatedShows, $fieldsToSync);
 
         return $this->asJson([
             'success' => true

@@ -265,6 +265,8 @@ class MediaManager extends Plugin
 			    foreach ($pushableSyncs as $pushableSync) {
 				    Craft::$app->getQueue()->push(new ShowSync([
 					    'showId' => $pushableSync->showId,
+							'regenerateThumbnails' => $pushableSync->regenerateThumbnail,
+					    'scheduledSync' => $pushableSync->id
 				    ]));
 						
 						$pushableSync->processed = 1;
