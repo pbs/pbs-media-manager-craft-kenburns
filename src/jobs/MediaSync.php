@@ -122,6 +122,10 @@ class MediaSync extends BaseJob
 
             // Set field values based on API Column Fields on settings
             $apiColumnFields = SettingsHelper::get( 'apiColumnFields' );
+						
+						if($this->fieldsToSync === '*' || in_array('title', $this->fieldsToSync)) {
+								$entry->title = $assetAttributes->title;
+						}
 
             foreach( $apiColumnFields as $apiColumnField ) {
                 
@@ -134,6 +138,11 @@ class MediaSync extends BaseJob
 							
                 switch( $apiField ) {
                     case 'thumbnail':
+											$thumbnail = $this->createOrUpdateThumbnail( $entry->title, $assetAttributes->images[ 0 ] );
+
+                      if($thumbnail) {
+                        $defaultFields[ SynchronizeHelper::getThumbnailField() ] = [ $thumbnail->id ];
+                      }
                     break;
                     case 'images':
                         $imagesHandle = SynchronizeHelper::getApiField( $apiField );
@@ -477,7 +486,7 @@ class MediaSync extends BaseJob
     private function processAdditionalFields( $defaultFields, $assetAttributes, $existingEntry, $entry, $forceRegenerateThumbnail )
     {
         // If user choose to force regenerate thumbnail
-        if( $forceRegenerateThumbnail == 'true' ) {
+        if($forceRegenerateThumbnail && $forceRegenerateThumbnail !== 'false') {
 
             $thumbnail = $this->createOrUpdateThumbnail( $entry->title, $assetAttributes->images[ 0 ] );
 
@@ -497,7 +506,6 @@ class MediaSync extends BaseJob
             }
 
         } else {
-
             // Regenerate if entry already exist and thumbnail is empty
             // or inaccessible due to Enabled Sites incomplete against Supported Sites which causing thumbnail empty
             if( $thumbnail = $this->thumbnailNotAccessibleAcrossSites( $entry ) ) {
@@ -631,7 +639,6 @@ class MediaSync extends BaseJob
         $asset     = Asset::findOne( [ 'filename' => $filename ] );
 
         if( $asset ) {
-
             // Need to regenerate if existing asset is inaccessible by some sites
             if( $this->compareEnabledSupportedSites( $asset ) ) {
                 return $asset;

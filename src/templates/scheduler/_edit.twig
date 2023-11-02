@@ -93,7 +93,9 @@
 
 		{% set apiColumnFields = craft.app.getPlugins().getPlugin('mediamanager').getSettings().apiColumnFields %}
 
-    {% set fieldsToSyncMap = {} %}
+    {% set fieldsToSyncMap = {
+	    'title': 'Title'
+    } %}
 
     {% for apiColumnField in apiColumnFields %}
         {% set fieldsToSyncMap = fieldsToSyncMap|merge({(apiColumnField[0]): apiColumnField[2]}) %}
