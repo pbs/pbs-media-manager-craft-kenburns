@@ -119,7 +119,7 @@
                     </div>
 
                     <div id="synchronize-all-button" class="btn submit" tabindex="1">{{ 'Update All Media'|t('media-manager') }}</div>
-
+                    {% set title = 'Synchronize All Shows' %}
                 {% case 'single' %}
 
                     <div class="field first" id="group-field">
@@ -188,7 +188,7 @@
                     }) }}
 
                     <div id="synchronize-single-button" class="btn submit" tabindex="1">{{ 'Update Media'|t('media-manager') }}</div>
-
+                    {% set title = 'Synchronize Single Media' %}
                 {% case 'show-entries' %}
 
                     <div class="field first" id="group-field">
@@ -233,7 +233,7 @@
                     </div>
 
                     <div id="synchronize-show-entries-button" class="btn submit" tabindex="1">{{ 'Synchronize Show Entries'|t('media-manager') }}</div>
-
+                    {% set title = 'Synchronize Show Entries' %}
                 {% default %}
 
                     {% set apiColumnFields = craft.app.getPlugins().getPlugin( 'mediamanager' ).getSettings().apiColumnFields %}
@@ -302,6 +302,8 @@
                             <a href="{{ url(pluginCpUrl) ~ '/shows/' ~ activeShow.id }}" class="btn submit">Set API Key Now</a>
                         {% endif %}
                     {% endif %}
+
+                {% set title = 'Synchronize' %}
             {% endswitch %}
 
         {% else %}
