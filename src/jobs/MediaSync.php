@@ -116,6 +116,8 @@ class MediaSync extends BaseJob
                 $availabilities->public->start,
                 $availabilities->public->end
             );
+						
+						$isNew = !$existingEntry;
 
             // Set default field Values
             $defaultFields = [];
@@ -123,7 +125,7 @@ class MediaSync extends BaseJob
             // Set field values based on API Column Fields on settings
             $apiColumnFields = SettingsHelper::get( 'apiColumnFields' );
 						
-						if($this->fieldsToSync === '*' || in_array('title', $this->fieldsToSync)) {
+						if($this->fieldsToSync === '*' || in_array('title', $this->fieldsToSync) || $isNew ){
 								$entry->title = $assetAttributes->title;
 						}
 
@@ -132,7 +134,7 @@ class MediaSync extends BaseJob
                 $apiField = $apiColumnField[ 0 ];
 								
 								// ensure the field to be updated from MM Settings is included in the fieldsToSync array
-								if($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync) ) {
+								if(!$isNew && ($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync)) ) {
 									continue;
 								}
 							
@@ -248,9 +250,7 @@ class MediaSync extends BaseJob
                             }
 
                             if( $film ) {
-                                if( $tag ) {
-                                    array_push( $filmTags, $film->id );
-                                }
+                                $filmTags[] = $film->id;
                             }
                         }
 
