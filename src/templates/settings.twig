@@ -10,7 +10,6 @@
 {% set tabs = [
     { label: 'Base', url: '#settings-tab-base' },
     { label: 'API Column & Fields', url: '#settings-tab-api-column-fields' },
-    { label: 'Field Layout', url: '#settings-tab-field-layout' },
     { label: 'Synchronize', url: '#settings-tab-synchronize' }
 ] %}
 
@@ -32,7 +31,7 @@
         ul.errors { list-style: none; padding-left: 0 !important;  }
         ul.errors li { list-style-type: none !important;  }
         .hud.info-hud { max-width: 300px; }
-        
+
         {% if not isCraft35 %}
             .flex .field.flex-grow:last-of-type { margin-top: 0 !important; margin-bottom: 7px !important; }
         {% endif %}
@@ -45,7 +44,6 @@
     {% namespace 'settings' %}
         {% include 'mediamanager/settings/_base' %}
         {% include 'mediamanager/settings/_apicolumnfields' %}
-        {% include 'mediamanager/settings/_fieldlayout' %}
         {% include 'mediamanager/settings/_synchronize' %}
     {% endnamespace %}
 

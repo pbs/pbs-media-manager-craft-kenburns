@@ -149,6 +149,32 @@ class ShowEntriesSync extends BaseJob
                 case 'show_media_manager_id':
                     $defaultFields[ SynchronizeHelper::getShowMediaManagerIdField() ] = $showEntry->id;
                 break;
+	              case 'show_site_url':
+									if(isset( $showAttributes->links) && is_array($showAttributes->links)){
+                        foreach($showAttributes->links as $link) {
+                            if($link->profile == 'producer') {
+																$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $link->value;
+														}
+                        }
+                    }
+								break;
+									
+	              case 'available_for_purchase':
+									$availableForPurchase = 0;
+									$purchasablePlatforms = ['itunes', 'amazon', 'buy-dvd', 'roku', 'apple-tv', 'ios'];
+									if(isset( $showAttributes->links) && is_array($showAttributes->links)){
+                        foreach($showAttributes->links as $link) {
+                            if($availableForPurchase || !in_array($link->profile, $purchasablePlatforms)){
+																continue;
+                            }
+														if(in_array($link->profile, $purchasablePlatforms)){
+																$availableForPurchase = 1;
+														}
+                        }
+												$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $availableForPurchase;
+                    }
+								break;
+									
                 case 'description_long':
                     // Only if new entry add description
                     if( !$existingEntry ) {

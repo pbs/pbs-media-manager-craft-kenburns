@@ -105,9 +105,9 @@ class MediaManager extends Plugin
     public function afterSaveSettings()
     {
         ApiColumnFieldsHelper::process();
-        FieldLayoutHelper::process();
+        //FieldLayoutHelper::process();
         ShowApiColumnFieldsHelper::process();
-        ShowFieldLayoutHelper::process();
+        //ShowFieldLayoutHelper::process();
         OldSettingsHelper::process();
     }
 
