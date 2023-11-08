@@ -216,10 +216,11 @@ class MediaSync extends BaseJob
                             if( $tag ) {
                                 array_push( $siteTags, $tag->id );
                             }
+
                         }
-
+												$this->siteTags = $siteTags;
                         $defaultFields[ $siteTagFieldHandle ] = $siteTags;
-
+												
                     break;
                     case 'film_tags':
 
@@ -253,7 +254,8 @@ class MediaSync extends BaseJob
                                 $filmTags[] = $film->id;
                             }
                         }
-
+												
+												$this->filmTags = $filmTags;
                         $defaultFields[ $filmTagFieldHandle ] = $filmTags;
 
                     break;
@@ -282,6 +284,7 @@ class MediaSync extends BaseJob
                             }
                         }
 
+												$this->topicTags = $topicTags;
                         $defaultFields[ $topicTagFieldHandle ] = $topicTags;
 
                     break;
