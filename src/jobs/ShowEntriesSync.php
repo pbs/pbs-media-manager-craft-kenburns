@@ -12,6 +12,9 @@ namespace papertiger\mediamanager\jobs;
 
 use Craft;
 use craft\db\Query;
+use craft\errors\ElementNotFoundException;
+use craft\helpers\DateTimeHelper;
+use craft\helpers\Json;
 use craft\queue\BaseJob;
 use craft\elements\Entry;
 use craft\elements\Asset;
@@ -20,9 +23,11 @@ use craft\helpers\FileHelper;
 use craft\helpers\ElementHelper;
 use craft\helpers\Assets as AssetHelper;
 
+use DateTime;
 use papertiger\mediamanager\MediaManager;
 use papertiger\mediamanager\helpers\SettingsHelper;
 use papertiger\mediamanager\helpers\SynchronizeHelper;
+use yii\base\Exception;
 
 
 class ShowEntriesSync extends BaseJob
@@ -58,12 +63,20 @@ class ShowEntriesSync extends BaseJob
     // =========================================================================
     
     private $dateWithMs = 'Y-m-d\TH:i:s.uP';
-
+		
+		private $_availabilityProcessed = false;
+		private $availabilityPassport = 0;
+		private $availabilityPublic = 0;
 
     // Public Methods
     // =========================================================================
-
-    public function execute( $queue )
+	
+	/**
+	 * @throws Exception
+	 * @throws \Throwable
+	 * @throws ElementNotFoundException
+	 */
+	public function execute( $queue )
     {
         $this->apiBaseUrl     = SettingsHelper::get( 'apiBaseUrl' );
         $this->sectionId      = SynchronizeHelper::getShowSectionId(); // SECTION_ID
@@ -75,11 +88,12 @@ class ShowEntriesSync extends BaseJob
         $this->logFile        = '@storage/logs/sync.log'; // LOG_FILE
 
         $url      = $this->generateAPIUrl( $this->apiKey );
-        $showEntry = $this->fetchShowEntry( $url );
+        $showEntry = $this->fetchShowEntry($url, '');
+				
+        $showAttributes = $showEntry->data->attributes;
 
-        $showAttributes = $showEntry->attributes;
-
-        $existingEntry       = $this->findExistingShowEntry( $showEntry->id );
+        $existingEntry       = $this->findExistingShowEntry( $showEntry->data->id );
+				$isNew = !$existingEntry;
         $entry               = $this->chooseOrCreateShowEntry( $showAttributes->title, $existingEntry );
 
         // Set default field Values
@@ -93,7 +107,7 @@ class ShowEntriesSync extends BaseJob
             $apiField = $apiColumnField[ 0 ];
 	
 		        // ensure the field to be updated from MM Settings is included in the fieldsToSync array
-		        if($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync) ) {
+		        if(!$isNew && ($this->fieldsToSync !== '*' && !in_array($apiField, $this->fieldsToSync))) {
 			        continue;
 		        }
 
@@ -147,8 +161,32 @@ class ShowEntriesSync extends BaseJob
                     $defaultFields[ SynchronizeHelper::getShowLastSyncedField() ] = new \DateTime( 'now' );
                 break;
                 case 'show_media_manager_id':
-                    $defaultFields[ SynchronizeHelper::getShowMediaManagerIdField() ] = $showEntry->id;
+                    $defaultFields[ SynchronizeHelper::getShowMediaManagerIdField() ] = $showEntry->data->id;
                 break;
+	              case 'show_site_url':
+									if(isset( $showAttributes->links) && is_array($showAttributes->links)){
+                        foreach($showAttributes->links as $link) {
+                            if($link->profile == 'producer') {
+																$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $link->value;
+														}
+                        }
+                    }
+								break;
+	              case 'available_for_purchase':
+									$availableForPurchase = 0;
+									$purchasablePlatforms = ['itunes', 'amazon', 'buy-dvd', 'roku', 'apple-tv', 'ios'];
+									if(isset( $showAttributes->links) && is_array($showAttributes->links)){
+                        foreach($showAttributes->links as $link) {
+                            if($availableForPurchase || !in_array($link->profile, $purchasablePlatforms)){
+																continue;
+                            }
+														if(in_array($link->profile, $purchasablePlatforms)){
+																$availableForPurchase = 1;
+														}
+                        }
+												$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $availableForPurchase;
+                    }
+								break;
                 case 'description_long':
                     // Only if new entry add description
                     if( !$existingEntry ) {
@@ -172,7 +210,6 @@ class ShowEntriesSync extends BaseJob
                         $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->episodes_count;
                     }
                 break;
-
                 case 'featured_preview':
 
                     $mediaManagerEntries = [];
@@ -185,7 +222,6 @@ class ShowEntriesSync extends BaseJob
                     }
 
                 break;
-
                 case 'links':
 
                     if( isset( $showAttributes->links ) && is_array( $showAttributes->links ) ) {
@@ -205,7 +241,16 @@ class ShowEntriesSync extends BaseJob
                     }
 
                 break;
-
+	              case 'stream_with_passport':
+									$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $this->getShowAvailability('availabilityPassport', $showEntry);
+									break;
+									
+		            case 'available_to_public':
+									$defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $this->getShowAvailability('availabilityPublic', $showEntry);
+									break;
+									
+								
+									
                 default:
                     $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->{ $apiField };
                 break;
@@ -244,14 +289,93 @@ class ShowEntriesSync extends BaseJob
         return $this->apiBaseUrl . 'shows/'. $apiKey . '/?platform-slug=bento&platform-slug=partnerplayer';
     }
 
-    private function fetchShowEntry( $url )
+    private function fetchShowEntry($url, $attribute = 'data')
     {
         $client   = Craft::createGuzzleClient();
         $response = $client->get( $url, $this->auth );
-        $response = json_decode( $response->getBody() );
+        $response = Json::decode($response->getBody(), false);
 
-        return $response->data;
+        if($attribute){
+					return $response->{$attribute};
+				}
+				
+        return $response;
     }
+	
+	/**
+	 * @throws \Exception
+	 */
+	private function getShowAvailability(string $attribute, $showEntry): int
+		{
+			// Don't run this twice
+			if($this->_availabilityProcessed){
+				return $this->$attribute;
+			}
+			
+			// There is probably a much cleaner / more straightforward way of doing this
+			// we need to loops through all assets of the show's first season to see if any of them are available for streaming
+			// If any episode in season 1 is available to passport members, then we can say the show is in Passport. If any episode within Season 1 is available to the Public, then we can also say it is "available to everyone".
+			// logic per https://github.com/pbs/pbs-media-manager-craft-plugin/issues/10#issuecomment-1791521258
+			
+			$availableOnPassport = 0;
+			$availableToPublic = 0;
+			
+      // get show's seasons
+      $seasonsUrl = $showEntry->links->seasons;
+      $seasonData = $this->fetchShowEntry($seasonsUrl);
+			if(!$seasonData){
+				 Craft::error('No seasons found for show ' . $showEntry->data->id, __METHOD__);
+				return 0;
+			}
+			
+			// get first season's episodes
+			$firstSeasonIndex = count($seasonData) - 1;
+			$episodesUrl = $seasonData[$firstSeasonIndex]->links->episodes;
+			$episodesData = $this->fetchShowEntry($episodesUrl);
+			
+			if(!$episodesData){
+				Craft::error('No episodes found for season ' . $seasonData[$firstSeasonIndex]->id, __METHOD__);
+				return 0;
+			}
+			
+			foreach($episodesData as $episode){
+				// if we've determined that both are true, we can stop looping
+				if($availableOnPassport && $availableToPublic){
+					continue;
+				}
+				
+				$episodeAssetsUrl = $episode->links->assets;
+				$episodeAssets = $this->fetchShowEntry($episodeAssetsUrl);
+				
+				if(!$episodeAssets) {
+					Craft::error('No assets found for episode ' . $episode->id, __METHOD__);
+					return 0;
+				}
+				
+				foreach($episodeAssets as $asset){
+					if($availableOnPassport && $availableToPublic){
+						continue;
+					}
+					
+					$publicEndDate = new DateTime($asset->attributes->availabilities->public->end) ?? null;
+					$passportEndDate = new DateTime($asset->attributes->availabilities->all_members->end) ?? null;
+					
+					if($publicEndDate instanceof DateTime){
+						$availableToPublic = DateTimeHelper::isInThePast($publicEndDate) ? 0 : 1;
+					}
+					
+					if($passportEndDate instanceof DateTime){
+						$availableOnPassport = DateTimeHelper::isInThePast($passportEndDate) ? 0 : 1;
+					}
+				}
+			}
+			
+			$this->availabilityPassport = $availableOnPassport;
+			$this->availabilityPublic = $availableToPublic;
+			$this->_availabilityProcessed = true;
+			
+			return $this->$attribute;
+		}
     
     private function findExistingShowEntry( $mediaManagerId )
     {

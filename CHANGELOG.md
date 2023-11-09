@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.3.3 - 2023-11-09
+### Fixed
+- Fixed missing property setters in the MediaSync job that prevented the 'check for changes' feature from working properly ([e4100dc](https://github.com/pbs/pbs-media-manager-craft-kenburns/commit/e4100dc53090e2c6f20a23e6b2288d3efe9e86a9))
+
+### Changed 
+- **New** Media entries and Show entries added during a sync will always synchronize all fields, regardless of what fields were selected for sync.
+- Plugin settings no longer handles field layouts for Media or Show sections. 
+### Added
+- Added more API attributes to the list of fields that can be synchronized to Show entries.
+- Show Entry sync jobs can now sync the Passport availability and public availability flags.
+
 ## 3.3.2 - 2023-11-02
 ### Fixed
 - Fix issue where the Thumbnail field was not updating when the sync was run if it had been included in the list of fields to sync.
@@ -10,7 +21,7 @@
 ## 3.3.1 - 2023-11-02
 ### Added
 - The plugin will now check whether a media entry should be 'marked for deletion' based on its presence in the API calls.
-- Show synchronizaiton jobs can now be scheduled to run at a specific time.
+- Show synchronization jobs can now be scheduled to run at a specific time.
 - You can now select what fields should be updated during a sync. 
 
 ## 3.1.1 - 2021-06-03

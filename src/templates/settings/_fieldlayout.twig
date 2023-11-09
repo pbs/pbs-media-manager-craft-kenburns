@@ -1,123 +1,123 @@
-{% import '_includes/forms' as forms %}
+{#{% import '_includes/forms' as forms %}#}
 
-{% set groups = craft.app.fields.getAllGroups() %}
-{% set settingFields = [] %}
-{% set showSettingFields = [] %}
-{% for tabName, tabFields in settings.fieldLayout %}
-    {% for tabField in tabFields %}
-        {% set settingFields = settingFields | merge( [ tabField ] ) %}
-    {% endfor %}
-{% endfor %}
-{% for tabName, tabFields in settings.showFieldLayout %}
-    {% for tabField in tabFields %}
-        {% set showSettingFields = showSettingFields | merge( [ tabField ] ) %}
-    {% endfor %}
-{% endfor %}
+{#{% set groups = craft.app.fields.getAllGroups() %}#}
+{#{% set settingFields = [] %}#}
+{#{% set showSettingFields = [] %}#}
+{#{% for tabName, tabFields in settings.fieldLayout %}#}
+{#    {% for tabField in tabFields %}#}
+{#        {% set settingFields = settingFields | merge( [ tabField ] ) %}#}
+{#    {% endfor %}#}
+{#{% endfor %}#}
+{#{% for tabName, tabFields in settings.showFieldLayout %}#}
+{#    {% for tabField in tabFields %}#}
+{#        {% set showSettingFields = showSettingFields | merge( [ tabField ] ) %}#}
+{#    {% endfor %}#}
+{#{% endfor %}#}
 
-<div id="tab-field-layout" class="hidden">
-    <style type="text/css">
-        #settings-fieldLayout {
-            opacity: 0;
-            position: absolute;
-            pointer-events: none;
-        }
-    </style>
+{#<div id="tab-field-layout" class="hidden">#}
+{#    <style type="text/css">#}
+{#        #settings-fieldLayout {#}
+{#            opacity: 0;#}
+{#            position: absolute;#}
+{#            pointer-events: none;#}
+{#        }#}
+{#    </style>#}
 
-    <div class="field" style="margin-top: 0;">
-        <div class="heading">
-            <label class="required">Media Section's Field Layout</label>
-        </div>
-        <div class="instructions">
-            <p>Modify media section's field layout based on API Column & Fields in previous tab.</p>
-        </div>
-    </div>
+{#    <div class="field" style="margin-top: 0;">#}
+{#        <div class="heading">#}
+{#            <label class="required">Media Section's Field Layout</label>#}
+{#        </div>#}
+{#        <div class="instructions">#}
+{#            <p>Modify media section's field layout based on API Column & Fields in previous tab.</p>#}
+{#        </div>#}
+{#    </div>#}
 
-    {% if isCraft35 %}
-        {% include 'mediamanager/settings/_fieldlayout/_craft35' %}
-    {% else %}
-        {% include 'mediamanager/settings/_fieldlayout/_oldercraft' %}
-    {% endif %}
+{#    {% if isCraft35 %}#}
+{#        {% include 'mediamanager/settings/_fieldlayout/_craft35' %}#}
+{#    {% else %}#}
+{#        {% include 'mediamanager/settings/_fieldlayout/_oldercraft' %}#}
+{#    {% endif %}#}
 
-    <hr/>
+{#    <hr/>#}
 
-    <div class="field" style="margin-top: 0;">
-        <div class="heading">
-            <label class="required">Show Section's Field Layout</label>
-        </div>
-        <div class="instructions">
-            <p>Modify show section's field layout based on API Column & Fields in previous tab.</p>
-        </div>
-    </div>
+{#    <div class="field" style="margin-top: 0;">#}
+{#        <div class="heading">#}
+{#            <label class="required">Show Section's Field Layout</label>#}
+{#        </div>#}
+{#        <div class="instructions">#}
+{#            <p>Modify show section's field layout based on API Column & Fields in previous tab.</p>#}
+{#        </div>#}
+{#    </div>#}
 
-    {% if isCraft35 %}
-        {% include 'mediamanager/settings/_fieldlayout/_showCraft35' %}
-    {% else %}
-        {% include 'mediamanager/settings/_fieldlayout/_showOldercraft' %}
-    {% endif %}
+{#    {% if isCraft35 %}#}
+{#        {% include 'mediamanager/settings/_fieldlayout/_showCraft35' %}#}
+{#    {% else %}#}
+{#        {% include 'mediamanager/settings/_fieldlayout/_showOldercraft' %}#}
+{#    {% endif %}#}
 
 
-    {% if isCraft35 %}
-        {% set jsSettings1 = {
-            customizableTabs: true,
-            customizableUi: true,
-            elementPlacementInputName: 'fieldLayout[__TAB_NAME__][]'|namespaceInputName,
-        } %}
+{#    {% if isCraft35 %}#}
+{#        {% set jsSettings1 = {#}
+{#            customizableTabs: true,#}
+{#            customizableUi: true,#}
+{#            elementPlacementInputName: 'fieldLayout[__TAB_NAME__][]'|namespaceInputName,#}
+{#        } %}#}
 
-        {% set jsSettings2 = {
-            customizableTabs: true,
-            customizableUi: true,
-            elementPlacementInputName: 'showFieldLayout[__TAB_NAME__][]'|namespaceInputName,
-        } %}
+{#        {% set jsSettings2 = {#}
+{#            customizableTabs: true,#}
+{#            customizableUi: true,#}
+{#            elementPlacementInputName: 'showFieldLayout[__TAB_NAME__][]'|namespaceInputName,#}
+{#        } %}#}
 
-        {% js %}
-            new Craft.FieldLayoutDesigner("#{{ 'fieldlayoutform'|namespaceInputId }}", {{ jsSettings1|json_encode|raw }});
-            new Craft.FieldLayoutDesigner("#{{ 'showfieldlayoutform'|namespaceInputId }}", {{ jsSettings2|json_encode|raw }});
+{#        {% js %}#}
+{#            new Craft.FieldLayoutDesigner("#{{ 'fieldlayoutform'|namespaceInputId }}", {{ jsSettings1|json_encode|raw }});#}
+{#            new Craft.FieldLayoutDesigner("#{{ 'showfieldlayoutform'|namespaceInputId }}", {{ jsSettings2|json_encode|raw }});#}
 
-            var settingsForm = document.getElementById( 'main-form' )
+{#            var settingsForm = document.getElementById( 'main-form' )#}
 
-            settingsForm.onsubmit = function() {
+{#            settingsForm.onsubmit = function() {#}
 
-                var inputs = document.querySelectorAll ('input.placement-input[name^="settings\\[fieldLayout\\]"]' );
-                var inputs_show = document.querySelectorAll ('input.placement-input[name^="settings\\[showFieldLayout\\]"]' );
+{#                var inputs = document.querySelectorAll ('input.placement-input[name^="settings\\[fieldLayout\\]"]' );#}
+{#                var inputs_show = document.querySelectorAll ('input.placement-input[name^="settings\\[showFieldLayout\\]"]' );#}
 
-                [].forEach.call( inputs, function( input ) {
+{#                [].forEach.call( inputs, function( input ) {#}
 
-                    console.log( 'was : ', input.value )
-                    input.value = input.closest( '.fld-field.fld-element' ).getAttribute( 'data-attribute' )
-                    console.log( 'now : ', input.value )
+{#                    console.log( 'was : ', input.value )#}
+{#                    input.value = input.closest( '.fld-field.fld-element' ).getAttribute( 'data-attribute' )#}
+{#                    console.log( 'now : ', input.value )#}
 
-                });
+{#                });#}
 
-                [].forEach.call( inputs_show, function( input ) {
+{#                [].forEach.call( inputs_show, function( input ) {#}
 
-                    console.log( 'was : ', input.value )
-                    input.value = input.closest( '.fld-field.fld-element' ).getAttribute( 'data-attribute' )
-                    console.log( 'now : ', input.value )
+{#                    console.log( 'was : ', input.value )#}
+{#                    input.value = input.closest( '.fld-field.fld-element' ).getAttribute( 'data-attribute' )#}
+{#                    console.log( 'now : ', input.value )#}
 
-                });
+{#                });#}
 
-                settingsForm.submit();
-            }
-        {% endjs %}
-    {% else %}
-        {% js %}
-            window.addEventListener('load', function() {
-                new Craft.FieldLayoutDesigner('.customshowfieldlayout', {
-                    customizableTabs: true,
-                    fieldInputName: '{{ "showFieldLayout[__TAB_NAME__][]"|namespaceInputName|e("js") }}',
-                    requiredFieldInputName: '{{ "requiredFields[]"|namespaceInputName|e("js") }}'
-                });
-            });
-        {% endjs %}
-        {% js %}
-            window.addEventListener('load', function() {
-                new Craft.FieldLayoutDesigner('.customfieldlayout', {
-                    customizableTabs: true,
-                    fieldInputName: '{{ "fieldLayout[__TAB_NAME__][]"|namespaceInputName|e("js") }}',
-                    requiredFieldInputName: '{{ "requiredFields[]"|namespaceInputName|e("js") }}'
-                });
-            });
-        {% endjs %}
-    {% endif %}
+{#                settingsForm.submit();#}
+{#            }#}
+{#        {% endjs %}#}
+{#    {% else %}#}
+{#        {% js %}#}
+{#            window.addEventListener('load', function() {#}
+{#                new Craft.FieldLayoutDesigner('.customshowfieldlayout', {#}
+{#                    customizableTabs: true,#}
+{#                    fieldInputName: '{{ "showFieldLayout[__TAB_NAME__][]"|namespaceInputName|e("js") }}',#}
+{#                    requiredFieldInputName: '{{ "requiredFields[]"|namespaceInputName|e("js") }}'#}
+{#                });#}
+{#            });#}
+{#        {% endjs %}#}
+{#        {% js %}#}
+{#            window.addEventListener('load', function() {#}
+{#                new Craft.FieldLayoutDesigner('.customfieldlayout', {#}
+{#                    customizableTabs: true,#}
+{#                    fieldInputName: '{{ "fieldLayout[__TAB_NAME__][]"|namespaceInputName|e("js") }}',#}
+{#                    requiredFieldInputName: '{{ "requiredFields[]"|namespaceInputName|e("js") }}'#}
+{#                });#}
+{#            });#}
+{#        {% endjs %}#}
+{#    {% endif %}#}
 
-</div>
+{#</div>#}
