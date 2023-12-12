@@ -31,7 +31,7 @@ class Api extends Component
 {
     // Private Properties
     // =========================================================================
-    
+
     protected static $sectionMediaHandle;
     protected static $sectionUsedMediaHandle;
     protected static $apiBaseUrl;
@@ -135,7 +135,7 @@ class Api extends Component
     public function synchronizeAll( $shows, $forceRegenerateThumbnail, $fieldsToSync = '*' )
     {
         foreach( $shows as $show ) {
-            
+
             if( $show->apiKey ) {
                 $this->runSynchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync );
             }
@@ -147,7 +147,7 @@ class Api extends Component
     public function synchronizeShowEntries( $shows, $fieldsToSync = '*' )
     {
         foreach( $shows as $show ) {
-            
+
             if( $show->apiKey ) {
 
                 Craft::$app->queue->push( new ShowEntriesSync([
@@ -155,19 +155,19 @@ class Api extends Component
                     'apiKey'      => $show->apiKey,
                     'title'       => $show->name . ' (Show)',
                     'auth'        => self::$apiAuth,
-	                  'fieldsToSync' => $fieldsToSync,
+                    'fieldsToSync' => $fieldsToSync,
                 ]));
             }
         }
 
         return true;
     }
-		
+
 		public function getApiBaseUrl()
 		{
 			return self::$apiBaseUrl;
 		}
-		
+
 		public function getApiAuth()
 		{
 			return self::$apiAuth;
@@ -177,7 +177,7 @@ class Api extends Component
     {
 
         try {
-            
+
             // Check used media entries from pages
             $usedMedia = [];
             $sites = Craft::$app->sites->getAllSites();
@@ -194,7 +194,7 @@ class Api extends Component
                 foreach( $pages as $page ) {
 
                     foreach( $page[ 'pageBuilder' ]->all() as $parentBlock ) {
-                        
+
                         foreach( $parentBlock[ 'row' ]->all() as $component ) {
 
                             switch( $component[ 'type' ] ) {
@@ -212,7 +212,7 @@ class Api extends Component
                                     }
 
                                     foreach( $component[ 'selectedMedia' ]->anyStatus()->all() as $entry ) {
-                                        
+
                                         array_push( $usedMedia, [
                                             'id' => $entry[ 'id' ],
                                             'title' => $entry[ 'title' ],
@@ -251,7 +251,7 @@ class Api extends Component
             foreach( $entries as $entry ) {
 
                 $mediaManagerId = $entry[ 'mediaManagerId' ];
-                
+
                 if( array_key_exists( $mediaManagerId, $duplicateCounter ) ) {
                     $duplicateCounter[ $mediaManagerId ]++;
                 } else {
@@ -320,7 +320,7 @@ class Api extends Component
             }
 
             return $total;
-            
+
 
         } catch( Exception $e ) {
             return false;
@@ -329,7 +329,7 @@ class Api extends Component
 
     // Private Methods
     // =========================================================================
-    
+
     private function runSynchronizeShow( $show, $forceRegenerateThumbnail, $fieldsToSync = '*' )
     {
         Craft::$app->queue->push( new MediaSync([

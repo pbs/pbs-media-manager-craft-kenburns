@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.4 - 2023-12-12
+### Added
+- The plugin now emits its own log files for better debugging.
+
+### Changed
+- The way a show's "Episode Count" property is determined now looks at a show's asset count rather than the static "Episode Count" property on the Show record.
+
 ## 3.3.3 - 2023-11-09
 ### Fixed
 - Fixed missing property setters in the MediaSync job that prevented the 'check for changes' feature from working properly ([e4100dc](https://github.com/pbs/pbs-media-manager-craft-kenburns/commit/e4100dc53090e2c6f20a23e6b2288d3efe9e86a9))
