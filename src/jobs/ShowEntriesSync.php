@@ -205,10 +205,20 @@ class ShowEntriesSync extends BaseJob
                     }
                 break;
                 case 'episodes_count':
-                    // Retain Episodes Count for existing entries
-                    if( !$existingEntry ) {
-                        $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->episodes_count;
+
+                    // legacy count
+                    $episodesCount = $showAttributes->episodes_count;
+                    // see here for context: https://github.com/pbs/pbs-media-manager-craft-plugin/issues/11#issuecomment-1850786717
+
+                    $assetsData = $this->fetchShowEntry($this->apiBaseUrl . 'assets', 'data',
+                        ['show-id' => $this->apiKey, 'type' => 'full_length', 'parent-type' => 'episode']);
+
+                    if($assetsData){
+                        $episodesCount = count($assetsData);
                     }
+
+                    $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $episodesCount;
+
                 break;
                 case 'featured_preview':
 
@@ -289,10 +299,16 @@ class ShowEntriesSync extends BaseJob
         return $this->apiBaseUrl . 'shows/'. $apiKey . '/?platform-slug=bento&platform-slug=partnerplayer';
     }
 
-    private function fetchShowEntry($url, $attribute = 'data')
+    private function fetchShowEntry($url, $attribute = 'data', $params = [])
     {
         $client   = Craft::createGuzzleClient();
-        $response = $client->get( $url, $this->auth );
+        $options = $this->auth;
+
+        if($params){
+          $options = array_merge($options, ['query' => $params]);
+        }
+
+        $response = $client->get($url, $options);
         $response = Json::decode($response->getBody(), false);
 
         if($attribute){
