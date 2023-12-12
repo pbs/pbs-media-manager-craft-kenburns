@@ -337,6 +337,7 @@ class ShowEntriesSync extends BaseJob
       // get show's seasons
       $seasonsUrl = $showEntry->links->seasons;
       $seasonData = $this->fetchShowEntry($seasonsUrl);
+
 			if(!$seasonData){
 				 Craft::error('No seasons found for show ' . $showEntry->data->id, __METHOD__);
 				return 0;
@@ -362,8 +363,7 @@ class ShowEntriesSync extends BaseJob
 				$episodeAssets = $this->fetchShowEntry($episodeAssetsUrl);
 
 				if(!$episodeAssets) {
-					Craft::error('No assets found for episode ' . $episode->id, __METHOD__);
-					return 0;
+					continue;
 				}
 
 				foreach($episodeAssets as $asset){
@@ -374,7 +374,7 @@ class ShowEntriesSync extends BaseJob
 					$publicEndDate = new DateTime($asset->attributes->availabilities->public->end) ?? null;
 					$passportEndDate = new DateTime($asset->attributes->availabilities->all_members->end) ?? null;
 
-					if($publicEndDate instanceof DateTime){
+          if($publicEndDate instanceof DateTime){
 						$availableToPublic = DateTimeHelper::isInThePast($publicEndDate) ? 0 : 1;
 					}
 

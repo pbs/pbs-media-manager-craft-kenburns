@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.4.1 - 2023-12-12
+### Fixed
+- Fix show sync logic that was incorrectly returning before show availability could be determined.
+
 ## 3.3.4 - 2023-12-12
 ### Added
 - The plugin now emits its own log files for better debugging.
