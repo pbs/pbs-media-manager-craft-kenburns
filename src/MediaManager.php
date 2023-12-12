@@ -63,7 +63,7 @@ class MediaManager extends Plugin
     // =========================================================================
     public $hasCpSettings = true;
     public $hasCpSection  = true;
-		
+
 		public $schemaVersion = '1.0.1';
     // Public Methods
     // =========================================================================
@@ -139,7 +139,7 @@ class MediaManager extends Plugin
             'label' => self::t( 'Synchronize' ),
             'url'   => 'mediamanager/synchronize'
         ];
-	
+
 	    $navigation[ 'subnav' ][ 'scheduler' ] = [
 		    'label' => self::t( 'Scheduler' ),
 		    'url'   => 'mediamanager/scheduler'
@@ -157,7 +157,7 @@ class MediaManager extends Plugin
             'label' => self::t( 'Clean Garbage Entries' ),
             'url'   => 'mediamanager/clean'
         ];
-				
+
 				$navigation['subnav']['stale-media'] = [
 					'label' => self::t('Manage Stale Media'),
 					'url'   => 'mediamanager/stale-media'
@@ -188,7 +188,7 @@ class MediaManager extends Plugin
 
                 $event->rules[ 'mediamanager/shows' ]               = 'mediamanager/show';
                 $event->rules[ 'mediamanager/shows/<entryId:\d+>' ] = 'mediamanager/show';
-                
+
                 $event->rules[ 'mediamanager/synchronize' ]                    = 'mediamanager/synchronize';
                 $event->rules[ 'mediamanager/synchronize/<entryId:\d+>' ]      = 'mediamanager/synchronize';
                 $event->rules[ 'mediamanager/synchronize/all' ]                = 'mediamanager/synchronize/all';
@@ -231,8 +231,8 @@ class MediaManager extends Plugin
                 }
             }
         );
-				
-				
+
+
 
         // Before plugin uninstalled
         Event::on(
@@ -261,21 +261,21 @@ class MediaManager extends Plugin
 								$variable->set('mediamanager', MediaManagerVariable::class);
             }
         );
-	
+
 	    Event::on(
 		    Application::class,
 		    Application::EVENT_INIT,
 		    function (Event $event) {
 					$scheduledSyncService = MediaManager::$plugin->scheduledSync;
 			    $pushableSyncs = $scheduledSyncService->getPushableSyncs();
-					
+
 			    foreach ($pushableSyncs as $pushableSync) {
 				    Craft::$app->getQueue()->push(new ShowSync([
 					    'showId' => $pushableSync->showId,
 							'regenerateThumbnails' => $pushableSync->regenerateThumbnail,
 					    'scheduledSync' => $pushableSync->id
 				    ]));
-						
+
 						$pushableSync->processed = 1;
 				    $scheduledSyncService->saveScheduledSync($pushableSync);
 			    }
