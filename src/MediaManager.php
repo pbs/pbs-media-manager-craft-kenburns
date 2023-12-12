@@ -83,14 +83,21 @@ class MediaManager extends Plugin
         $this->registerBehaviors();
         $this->registerPluginServices();
 
-        Craft::info(
-            Craft::t(
-                'mediamanager',
-                '{name} plugin loaded',
-                [ 'name' => $this->name ]
-            ),
-            __METHOD__
-        );
+        $fileTarget = new \craft\log\FileTarget([
+            'logFile' => '@storage/logs/media-manager.log',
+            'categories' => ['papertiger\mediamanager\*'],
+            'enableRotation' => true,
+        ]);
+        Craft::getLogger()->dispatcher->targets[] = $fileTarget;
+
+        // ? ERROR LOG FILE
+        $errorTarget = new \craft\log\FileTarget([
+            'logFile' => '@storage/logs/media-manager-errors.log',
+            'categories' => ['papertiger\mediamanager\*'],
+            'levels' => ['error'],
+            'enableRotation' => true,
+        ]);
+        Craft::getLogger()->dispatcher->targets[] = $errorTarget;
     }
 
     public function beforeInstall(): bool
