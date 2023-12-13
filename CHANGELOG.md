@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.4.2 = 2023-12-13
+### Fixed
+- Fix show availability sync that was including assets like clips and trailers when determining a show's public availability
+
 ## 3.3.4.1 - 2023-12-12
 ### Fixed
 - Fix show sync logic that was incorrectly returning before show availability could be determined.
