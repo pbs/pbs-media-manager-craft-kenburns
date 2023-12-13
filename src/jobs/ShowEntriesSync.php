@@ -360,7 +360,7 @@ class ShowEntriesSync extends BaseJob
 				}
 
 				$episodeAssetsUrl = $episode->links->assets;
-				$episodeAssets = $this->fetchShowEntry($episodeAssetsUrl);
+				$episodeAssets = $this->fetchShowEntry($episodeAssetsUrl, 'data', ['type' => 'full_length']);
 
 				if(!$episodeAssets) {
 					continue;
