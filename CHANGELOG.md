@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.4.3 = 2024-02-01
+
+### Changed
+- ScheduledSyncController console command has been renamed to ScheduleController to align with the naming convention of the GA MM plugin.
+
 ## 3.3.4.2 = 2023-12-13
 ### Fixed
 - Fix show availability sync that was including assets like clips and trailers when determining a show's public availability
