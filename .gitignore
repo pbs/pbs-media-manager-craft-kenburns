@@ -1,0 +1,6 @@
+vendor
+craft
+composer.lock
+.ddev
+.DS_Store
+.idea
