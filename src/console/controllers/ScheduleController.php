@@ -20,12 +20,12 @@
 	use papertiger\mediamanager\helpers\SettingsHelper;
 	
 	
-	class ScheduledSyncController extends Controller
+	class ScheduleController extends Controller
 	{
 		public $defaultAction = 'index';
-		protected $allowAnonymous = ['index'];
+		protected $allowAnonymous = ['index', 'run'];
 		
-		public function actionIndex()
+		public function actionIndex(): int
 		{
 			$scheduledSyncService = MediaManager::$plugin->scheduledSync;
 			$pushableSyncs = $scheduledSyncService->getPushableSyncs();
@@ -48,5 +48,10 @@
 			}
 			
 			return ExitCode::OK;
+		}
+		
+		public function actionRun(): int
+		{
+			return $this->actionIndex();
 		}
 	}
