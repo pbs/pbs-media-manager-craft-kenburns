@@ -34,7 +34,7 @@ class MediaClean extends BaseJob
     // Public Methods
     // =========================================================================
 
-    public function execute( $queue )
+    public function execute( $queue ): void
     {
         Craft::$app->getElements()->deleteElementById( $this->entryId, Entry::class );
         $this->setProgress( $queue, $this->count / $this->total );

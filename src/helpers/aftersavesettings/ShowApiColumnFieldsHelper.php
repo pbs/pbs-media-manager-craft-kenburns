@@ -202,7 +202,7 @@ class ShowApiColumnFieldsHelper
                 if( method_exists( 'ElementHelper', 'generateSlug' ) ) {
                     $tagGroupHandle = ElementHelper::generateSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 } else {
-                    $tagGroupHandle = ElementHelper::createSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
+                    $tagGroupHandle = ElementHelper::normalizeSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 }
 
                 // Find tag group first

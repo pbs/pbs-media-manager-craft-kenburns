@@ -32,7 +32,7 @@ class SynchronizeController extends Controller
     
     protected const SYNCHRONIZE_TEMPLATE_PATH = 'mediamanager/synchronize';
     protected const CLEAN_TEMPLATE_PATH       = 'mediamanager/clean';
-    protected $allowAnonymous                 = [ 'index', 'all', 'single', 'synchronize' ];
+    protected array|int|bool $allowAnonymous                 = [ 'index', 'all', 'single', 'synchronize' ];
 
 
     // Public Methods

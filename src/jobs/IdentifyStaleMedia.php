@@ -52,7 +52,7 @@ class IdentifyStaleMedia extends BaseJob
     // Public Methods
     // =========================================================================
 
-    public function execute( $queue )
+    public function execute( $queue ): void
     {
 
         if (!$this->tags) {

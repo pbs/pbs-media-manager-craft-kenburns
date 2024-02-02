@@ -29,7 +29,7 @@ class ShowController extends Controller
     // Protected Properties
     // =========================================================================
     protected const SHOW_TEMPLATE_PATH = 'mediamanager/show';
-    protected $allowAnonymous          = [ 'index', 'show', 'pbs' ];
+    protected array|int|bool $allowAnonymous          = [ 'index', 'show', 'pbs' ];
 
 
     // Public Methods

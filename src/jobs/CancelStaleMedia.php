@@ -32,7 +32,7 @@ class CancelStaleMedia extends BaseJob
     // Public Methods
     // =========================================================================
 
-    public function execute( $queue )
+    public function execute( $queue ): void
     {
 
         $relatedMediaObjects = Entry::find()->markedForDeletion(1);

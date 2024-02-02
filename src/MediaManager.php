@@ -61,10 +61,10 @@ class MediaManager extends Plugin
 
     // Public Properties
     // =========================================================================
-    public $hasCpSettings = true;
-    public $hasCpSection  = true;
+    public bool $hasCpSettings = true;
+    public bool $hasCpSection  = true;
 
-		public $schemaVersion = '1.0.1';
+		public string $schemaVersion = '1.0.1';
     // Public Methods
     // =========================================================================
 
@@ -100,7 +100,7 @@ class MediaManager extends Plugin
         Craft::getLogger()->dispatcher->targets[] = $errorTarget;
     }
 
-    public function beforeInstall(): bool
+    public function beforeInstall(): void
     {
         if( version_compare( Craft::$app->getInfo()->version, '3.0', '<' ) ) {
             throw new Exception( 'Media Manager 3 requires Craft CMS 3.0+ in order to run.' );
@@ -109,7 +109,7 @@ class MediaManager extends Plugin
         return true;
     }
 
-    public function afterSaveSettings()
+    public function afterSaveSettings(): void
     {
         ApiColumnFieldsHelper::process();
         //FieldLayoutHelper::process();
@@ -118,7 +118,7 @@ class MediaManager extends Plugin
         OldSettingsHelper::process();
     }
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         // This way we can have more flexibility on displaying settings template
         return Craft::$app->controller->renderTemplate( 'mediamanager/settings', SettingsHelper::templateVariables() );
