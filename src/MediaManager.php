@@ -11,37 +11,40 @@
 namespace papertiger\mediamanager;
 
 use Craft;
-use craft\queue\Queue;
-use craft\web\Application;
 use Exception;
-use papertiger\mediamanager\jobs\ShowSync;
-use papertiger\mediamanager\variables\MediaManagerVariable;
 use yii\base\Event;
+use Psr\Log\LogLevel;
 use craft\base\Plugin;
+use craft\queue\Queue;
 use craft\web\UrlManager;
+use craft\web\Application;
 use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\events\ModelEvent;
 use craft\helpers\UrlHelper;
+use craft\log\MonologTarget;
+use craft\events\PluginEvent;
 use craft\services\Utilities;
+use Monolog\Formatter\LineFormatter;
 use craft\events\RegisterUrlRulesEvent;
-use craft\events\RegisterComponentTypesEvent;
-use craft\web\twig\variables\CraftVariable;
+use papertiger\mediamanager\jobs\ShowSync;
 
-use papertiger\mediamanager\models\SettingsModel;
+use craft\web\twig\variables\CraftVariable;
+use craft\events\RegisterComponentTypesEvent;
 use papertiger\mediamanager\helpers\SetupHelper;
+use papertiger\mediamanager\models\SettingsModel;
 use papertiger\mediamanager\helpers\SettingsHelper;
-use papertiger\mediamanager\helpers\DependencyHelper;
 use papertiger\mediamanager\behaviors\MediaBehavior;
+use papertiger\mediamanager\helpers\DependencyHelper;
 use papertiger\mediamanager\services\Api as ApiService;
 use papertiger\mediamanager\services\Show as ShowService;
 use papertiger\mediamanager\services\ScheduledSyncService;
+use papertiger\mediamanager\variables\MediaManagerVariable;
 use papertiger\mediamanager\services\OldSettings as OldSettingsService;
 use papertiger\mediamanager\helpers\aftersavesettings\FieldLayoutHelper;
+use papertiger\mediamanager\helpers\aftersavesettings\OldSettingsHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ApiColumnFieldsHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ShowFieldLayoutHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ShowApiColumnFieldsHelper;
-use papertiger\mediamanager\helpers\aftersavesettings\OldSettingsHelper;
 
 /**
  * Class MediaManager
@@ -83,30 +86,37 @@ class MediaManager extends Plugin
         $this->registerBehaviors();
         $this->registerPluginServices();
 
-        $fileTarget = new \craft\log\FileTarget([
-            'logFile' => '@storage/logs/media-manager.log',
+        Craft::getLogger()->dispatcher->targets[] = new MonologTarget([
+            'name' => 'media-manager',
             'categories' => ['papertiger\mediamanager\*'],
-            'enableRotation' => true,
+            'level' => LogLevel::INFO,
+            'logContext' => false,
+            'allowLineBreaks' => false,
+            'formatter' => new LineFormatter(
+                format: "%datetime% [%level_name%] from %extra.yii_category%: %message%\n",
+                dateFormat: 'Y-m-d H:i:s',
+            ),
         ]);
-        Craft::getLogger()->dispatcher->targets[] = $fileTarget;
 
         // ? ERROR LOG FILE
-        $errorTarget = new \craft\log\FileTarget([
-            'logFile' => '@storage/logs/media-manager-errors.log',
+        Craft::getLogger()->dispatcher->targets[] = new MonologTarget([
+            'name' => 'media-manager-errors',
             'categories' => ['papertiger\mediamanager\*'],
-            'levels' => ['error'],
-            'enableRotation' => true,
+            'level' => LogLevel::ERROR,
+            'logContext' => true,
+            'allowLineBreaks' => true,
+            'formatter' => new LineFormatter(
+                format: "%datetime% [%level_name%] from %extra.yii_category%: %message%\n",
+                dateFormat: 'Y-m-d H:i:s',
+            ),
         ]);
-        Craft::getLogger()->dispatcher->targets[] = $errorTarget;
     }
 
     public function beforeInstall(): void
     {
-        if( version_compare( Craft::$app->getInfo()->version, '3.0', '<' ) ) {
-            throw new Exception( 'Media Manager 3 requires Craft CMS 3.0+ in order to run.' );
+        if( version_compare( Craft::$app->getInfo()->version, '4.0', '<' ) ) {
+            throw new Exception( 'Media Manager 4 requires Craft CMS 4.0+ in order to run.' );
         }
-
-        return true;
     }
 
     public function afterSaveSettings(): void
