@@ -15,23 +15,21 @@ use Exception;
 use yii\base\Event;
 use Psr\Log\LogLevel;
 use craft\base\Plugin;
-use craft\queue\Queue;
 use craft\web\UrlManager;
 use craft\web\Application;
 use craft\services\Plugins;
-use craft\events\ModelEvent;
 use craft\helpers\UrlHelper;
 use craft\log\MonologTarget;
+use craft\models\FieldGroup;
 use craft\events\PluginEvent;
-use craft\services\Utilities;
 use Monolog\Formatter\LineFormatter;
 use craft\events\RegisterUrlRulesEvent;
-use papertiger\mediamanager\jobs\ShowSync;
 
+use papertiger\mediamanager\jobs\ShowSync;
 use craft\web\twig\variables\CraftVariable;
-use craft\events\RegisterComponentTypesEvent;
 use papertiger\mediamanager\helpers\SetupHelper;
 use papertiger\mediamanager\models\SettingsModel;
+use papertiger\mediamanager\base\ConstantAbstract;
 use papertiger\mediamanager\helpers\SettingsHelper;
 use papertiger\mediamanager\behaviors\MediaBehavior;
 use papertiger\mediamanager\helpers\DependencyHelper;
@@ -40,10 +38,8 @@ use papertiger\mediamanager\services\Show as ShowService;
 use papertiger\mediamanager\services\ScheduledSyncService;
 use papertiger\mediamanager\variables\MediaManagerVariable;
 use papertiger\mediamanager\services\OldSettings as OldSettingsService;
-use papertiger\mediamanager\helpers\aftersavesettings\FieldLayoutHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\OldSettingsHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ApiColumnFieldsHelper;
-use papertiger\mediamanager\helpers\aftersavesettings\ShowFieldLayoutHelper;
 use papertiger\mediamanager\helpers\aftersavesettings\ShowApiColumnFieldsHelper;
 
 /**
@@ -67,7 +63,7 @@ class MediaManager extends Plugin
     public bool $hasCpSettings = true;
     public bool $hasCpSection  = true;
 
-		public string $schemaVersion = '1.0.1';
+    public string $schemaVersion = '1.0.1';
     // Public Methods
     // =========================================================================
 
@@ -118,13 +114,48 @@ class MediaManager extends Plugin
             throw new Exception( 'Media Manager 4 requires Craft CMS 4.0+ in order to run.' );
         }
     }
+    public function afterInstall(): void
+    {
+        //	create Media Manager field group
+	    $fieldgroup = \craft\records\FieldGroup::find()->where(['name' => ConstantAbstract::DEFAULT_FIELD_GROUP])->one();
+
+        if(!$fieldgroup) {
+            $fieldgroup = new FieldGroup();
+            $fieldgroup->name = ConstantAbstract::DEFAULT_FIELD_GROUP;
+            Craft::$app->getFields()->saveGroup($fieldgroup);
+        }
+
+        foreach(ConstantAbstract::API_COLUMN_FIELDS as $field) {
+            $fieldExists = Craft::$app->getFields()->getFieldByHandle($field[3]);
+
+            if(!$fieldExists) {
+                $newField = Craft::$app->getFields()->createField([
+                    'type' => $field[4],
+                    'name' => $field[2],
+                    'handle' => $field[3],
+                    'groupId' => $fieldgroup->id
+                ]);
+            }
+        }
+
+	    foreach(ConstantAbstract::SHOW_API_COLUMN_FIELDS as $field) {
+		    $fieldExists = Craft::$app->getFields()->getFieldByHandle($field[3]);
+
+            if(!$fieldExists) {
+                $newField = Craft::$app->getFields()->createField([
+                    'type' => $field[4],
+                    'name' => $field[2],
+                    'handle' => $field[3],
+                    'groupId' => $fieldgroup->id
+                ]);
+            }
+	    }
+    }
 
     public function afterSaveSettings(): void
     {
         ApiColumnFieldsHelper::process();
-        //FieldLayoutHelper::process();
         ShowApiColumnFieldsHelper::process();
-        //ShowFieldLayoutHelper::process();
         OldSettingsHelper::process();
     }
 
@@ -168,10 +199,10 @@ class MediaManager extends Plugin
             'url'   => 'mediamanager/clean'
         ];
 
-				$navigation['subnav']['stale-media'] = [
-					'label' => self::t('Manage Stale Media'),
-					'url'   => 'mediamanager/stale-media'
-				];
+        $navigation['subnav']['stale-media'] = [
+            'label' => self::t('Manage Stale Media'),
+            'url'   => 'mediamanager/stale-media'
+        ];
 
         $navigation[ 'subnav' ][ 'settings' ] = [
             'label' => self::t( 'Settings' ),
@@ -208,9 +239,9 @@ class MediaManager extends Plugin
                 $event->rules[ 'mediamanager/synchronize/synchronize-single' ] = 'mediamanager/synchronize/synchronize-single';
                 $event->rules[ 'mediamanager/synchronize/synchronize-all' ]    = 'mediamanager/synchronize/synchronize-all';
                 $event->rules[ 'mediamanager/synchronize/synchronize-show-entries' ] = 'mediamanager/synchronize/synchronize-show-entries';
-								$event->rules[ 'mediamanager/scheduler'] = 'mediamanager/scheduled-sync/index';
-								$event->rules['mediamanager/scheduler/<scheduledSyncId:\d+>'] = 'mediamanager/scheduled-sync/edit';
-								$event->rules['mediamanager/scheduler/new'] = 'mediamanager/scheduled-sync/edit';
+                $event->rules[ 'mediamanager/scheduler'] = 'mediamanager/scheduled-sync/index';
+                $event->rules['mediamanager/scheduler/<scheduledSyncId:\d+>'] = 'mediamanager/scheduled-sync/edit';
+                $event->rules['mediamanager/scheduler/new'] = 'mediamanager/scheduled-sync/edit';
 
                 $event->rules[ 'mediamanager/clean' ] = 'mediamanager/synchronize/clean';
             }
@@ -263,12 +294,11 @@ class MediaManager extends Plugin
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
             function( Event $e ) {
-
                 $variable = $e->sender;
                 $variable->attachBehaviors([
                     MediaBehavior::class,
                 ]);
-								$variable->set('mediamanager', MediaManagerVariable::class);
+				$variable->set('mediamanager', MediaManagerVariable::class);
             }
         );
 
@@ -276,17 +306,17 @@ class MediaManager extends Plugin
 		    Application::class,
 		    Application::EVENT_INIT,
 		    function (Event $event) {
-					$scheduledSyncService = MediaManager::$plugin->scheduledSync;
+                $scheduledSyncService = MediaManager::$plugin->scheduledSync;
 			    $pushableSyncs = $scheduledSyncService->getPushableSyncs();
 
 			    foreach ($pushableSyncs as $pushableSync) {
 				    Craft::$app->getQueue()->push(new ShowSync([
 					    'showId' => $pushableSync->showId,
-							'regenerateThumbnails' => $pushableSync->regenerateThumbnail,
+                        'regenerateThumbnails' => $pushableSync->regenerateThumbnail,
 					    'scheduledSync' => $pushableSync->id
 				    ]));
 
-						$pushableSync->processed = 1;
+                    $pushableSync->processed = 1;
 				    $scheduledSyncService->saveScheduledSync($pushableSync);
 			    }
 		    }
@@ -300,7 +330,7 @@ class MediaManager extends Plugin
             'show'          => ShowService::class,
             'api'           => ApiService::class,
             'oldsettings'   => OldSettingsService::class,
-	          'scheduledSync' => ScheduledSyncService::class,
+            'scheduledSync' => ScheduledSyncService::class,
         ]);
     }
 
