@@ -14,7 +14,12 @@ abstract class ConstantAbstract
 {
     // Constants
     // =========================================================================
+    const DEPENDENCY_PLUGIN_CRAFT_RICHTEXT_PLUGINS = [
+        'ckeditor' => ['handle' => 'ckeditor', 'package' => 'craftcms/ckeditor', 'fieldtype' => 'craft\ckeditor\Field', 'version' => '^3.0.0'],
+        'redactor' => ['handle' => 'redactor', 'package' => 'craftcms/redactor', 'fieldtype' => 'craft\redactor\Field', 'version' => '^3.0.0']
+    ];
 
+    const DEFAULT_RICHTEXT_TYPE = self::DEPENDENCY_PLUGIN_CRAFT_RICHTEXT_PLUGINS['redactor'];
     const DEPENDENCY_PLUGIN_CRAFT_REDACTOR_HANDLE  = 'redactor';
     const DEPENDENCY_PLUGIN_CRAFT_REDACTOR_PACKAGE = 'craftcms/redactor';
     const DEPENDENCY_PLUGIN_CRAFT_REDACTOR_VERSION = '>=2.3.0';
@@ -34,7 +39,7 @@ abstract class ConstantAbstract
 
         // From PBS API Fields
         [ 'duration', '', 'Duration', 'duration', 'craft\fields\PlainText' ],
-        [ 'description_long', '', 'Description', 'description', 'craft\redactor\Field' ],
+        [ 'description_long', '', 'Description', 'description', self::DEFAULT_RICHTEXT_TYPE['fieldtype'] ],
         [ 'object_type', '', 'Media Type', 'mediaType', 'craft\fields\PlainText' ],
         [ 'player_code', '', 'Player Code', 'playerCode', 'craft\fields\PlainText' ],
     ];
@@ -45,8 +50,8 @@ abstract class ConstantAbstract
         [ 'show_media_manager_id', '', 'Media Manager ID', 'showMediaManagerId', 'craft\fields\PlainText' ],
 
         // From PBS API Fields
-        [ 'description_short', '', 'Description Short', 'showDescriptionShort', 'craft\redactor\Field' ],
-        [ 'description_long', '', 'Description Long', 'showDescriptionLong', 'craft\redactor\Field' ],
+        [ 'description_short', '', 'Description Short', 'showDescriptionShort', self::DEFAULT_RICHTEXT_TYPE['fieldtype'] ],
+        [ 'description_long', '', 'Description Long', 'showDescriptionLong', self::DEFAULT_RICHTEXT_TYPE['fieldtype'] ],
     ];
 
     const REQUIRED_FIELDS  = [

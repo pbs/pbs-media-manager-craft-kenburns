@@ -229,8 +229,11 @@ class ShowApiColumnFieldsHelper
                 $fieldInformation[ 'type' ]   = Tags::class;
                 $fieldInformation[ 'source' ] = 'taggroup:' . $tagGroupUid;
             break;
+            case 'craft\ckeditor\Field':
+                $fieldInformation[ 'type' ] = "craft\ckeditor\Field";
+            break;
         }
-
+        
         return $fieldInformation;
     }
 

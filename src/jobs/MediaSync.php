@@ -574,11 +574,11 @@ class MediaSync extends BaseJob
     private function thumbnailNotAccessibleAcrossSites( $entry )
     {
         // If thumbnail empty, don't overwrite it since it might be from the admin
-        if( !count( $entry->{ SynchronizeHelper::getThumbnailField() } ) ) {
+        if( !$entry->{ SynchronizeHelper::getThumbnailField() }->collect()->count() ) {
             return false;
         }
 
-        $asset = $entry->{ SynchronizeHelper::getThumbnailField() }[0];
+        $asset = $entry->{ SynchronizeHelper::getThumbnailField() }->collect()->first();
 
         if( !$asset ) {
             return false;
