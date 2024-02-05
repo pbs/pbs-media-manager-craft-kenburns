@@ -198,6 +198,8 @@
                         options: fieldsToSyncMap,
                         values: '*',
                         instructions: 'Choose which fields you would like to be updated during this sync.',
+                    }) }}
+                    
                     {{ forms.selectField({
                         first: false,
                         label: "Media Asset's Site",
@@ -335,5 +337,5 @@
 {% endset %}
 
 {% js on ready %}
-    new Craft.SynchronizeAdmin();
+    new Craft.SynchronizeAdmin()
 {% endjs %}

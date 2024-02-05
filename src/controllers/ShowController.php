@@ -34,7 +34,7 @@ class ShowController extends Controller
 
     // Public Methods
     // =========================================================================
-    
+
     public function actionIndex( $entryId = null )
     {
 
@@ -54,7 +54,7 @@ class ShowController extends Controller
         );
     }
 
-    public function actionSave()
+    public function actionSave(): ?Response
     {
         $request = Craft::$app->getRequest();
         $name    = $request->getBodyParam( 'name' );
@@ -65,7 +65,7 @@ class ShowController extends Controller
 
         if( !$name ) {
 
-            return $this->asJson([
+            return $this->asFailure('Show name is required', [
                 'success' => false,
                 'errors' => [ 'Show name is required' ],
             ]);
@@ -76,7 +76,7 @@ class ShowController extends Controller
 
             if( !MediaManager::getInstance()->api->validateApiKey( $apiKey, 'show' ) ) {
 
-                return $this->asJson([
+                return $this->asFailure('Invalid API Key', [
                     'success' => false,
                     'errors' => [ 'Invalid API Key' ],
                 ]);
@@ -87,13 +87,13 @@ class ShowController extends Controller
 
         if( $show->getErrors() ) {
 
-            return $this->asJson([
+            return $this->asFailure('Unable to save show.', [
                 'success' => false,
                 'errors' => $show->getErrors(),
             ]);
         }
 
-        return $this->asJson([
+        return $this->asSuccess('Show saved.', [
             'success' => true,
             'show' => [
                 'id' => $show->id,

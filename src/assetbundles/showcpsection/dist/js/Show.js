@@ -99,25 +99,24 @@
 
           $('#showupdatebtn').addClass('disabled');
 
-          Craft.sendActionRequest('POST', 'mediamanager/show/save', { data })
+          Craft.sendActionRequest('POST', 'mediamanager/show/save', {data})
             .then((response) => {
 
               $('#showupdatebtn').removeClass('disabled');
-
-              if (textStatus === 'success') {
-                if (response.success) {
-                  $('#apiKey').val(response.show.apiKey);
-                  Craft.cp.displayNotice(Craft.t('mediamanager', 'Show updated'));
-                }
-                else if (response.errors) {
-                  var errors = this.flattenErrors(response.errors);
-                  Craft.cp.displayError(Craft.t('mediamanager', 'Could not update the show:') + "\n\n" + errors.join("\n"));
-                }
+              if (response.data.success) {
+                $('#apiKey').val(response.data.show.apiKey);
+                Craft.cp.displayNotice(Craft.t('mediamanager', 'Show updated'));
               }
+              else if (response.data.errors) {
+                var errors = this.flattenErrors(response.data.errors);
+                Craft.cp.displayError(Craft.t('mediamanager', 'Could not update the show:') + "\n\n" + errors.join("\n"));
+              }
+
             })
 
             .catch(({ response }) => {
-              Craft.cp.displayError();
+              var errors = this.flattenErrors(response.data.errors);
+              Craft.cp.displayError(Craft.t('mediamanager', 'Could not update the show:') + "\n\n" + errors.join("\n"));
             })
         } else {
 
@@ -140,11 +139,11 @@
 
           Craft.sendActionRequest('POST', 'mediamanager/show/save', { data })
             .then((response) => {
-              if (response.success) {
-                location.href = Craft.getUrl('mediamanager/shows/' + response.show.id);
+              if (response.data.success) {
+                location.href = Craft.getUrl('mediamanager/shows/' + response.data.show.id);
               }
-              else if (response.errors) {
-                var errors = this.flattenErrors(response.errors);
+              else if (response.data.errors) {
+                var errors = this.flattenErrors(response.data.errors);
                 alert(Craft.t('mediamanager', 'Could not create the show:') + "\n\n" + errors.join("\n"));
               }
             })
@@ -166,12 +165,12 @@
 
           Craft.sendActionRequest('POST', 'mediamanager/show/save', { data })
             .then((response) => {
-              if (response.success) {
-                this.$selectedShow.text(response.show.name);
+              if (response.data.success) {
+                this.$selectedShow.text(response.data.show.name);
                 Craft.cp.displayNotice(Craft.t('mediamanager', 'Show renamed'));
               }
-              else if (response.errors) {
-                var errors = this.flattenErrors(response.errors);
+              else if (response.data.errors) {
+                var errors = this.flattenErrors(response.data.errors);
                 alert(Craft.t('mediamanager', 'Could not rename the show:') + "\n\n" + errors.join("\n"));
               }
             })
@@ -189,11 +188,11 @@
 
           Craft.sendActionRequest('POST', 'mediamanager/show/delete', { data })
             .then((response) => {
-              if (response.success) {
+              if (response.data.success) {
                 location.href = Craft.getUrl('mediamanager/shows');
               }
-              else if (response.errors) {
-                var errors = this.flattenErrors(response.errors);
+              else if (response.data.errors) {
+                var errors = this.flattenErrors(response.data.errors);
                 alert(Craft.t('mediamanager', 'Could not delete the show:') + "\n\n" + errors.join("\n"));
               }
             })

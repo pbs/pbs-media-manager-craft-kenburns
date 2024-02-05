@@ -51,15 +51,15 @@
 
         Craft.sendActionRequest('POST', 'mediamanager/synchronize/run-clean', {})
           .then((response) => {
-            if (response.success) {
-              Craft.cp.displayNotice(Craft.t('mediamanager', 'Start cleaning ' + response.total + ' entries.'));
+            if (response.data.success) {
+              Craft.cp.displayNotice(Craft.t('mediamanager', 'Start cleaning ' + response.data.total + ' entries.'));
               setTimeout(function () {
                 location.href = Craft.getUrl('mediamanager/entries/');
               }, 1000);
             }
-            else if (response.errors) {
+            else if (response.data.errors) {
               $('#cleanallbtn').removeClass('disabled');
-              var errors = this.flattenErrors(response.errors);
+              var errors = this.flattenErrors(response.data.errors);
               Craft.cp.displayError(Craft.t('mediamanager', 'Could not start cleaning:') + "\n\n" + errors.join("\n"));
             }
           })
@@ -89,15 +89,15 @@
 
           Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-show', { data })
             .then((response) => {
-              if (response.success) {
+              if (response.data.success) {
                 Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize "' + name + '" started.'));
                 setTimeout(function () {
                   location.href = Craft.getUrl('mediamanager/entries/');
                 }, 1000);
               }
-              else if (response.errors) {
+              else if (response.data.errors) {
                 $('#synchronizeshowbtn').removeClass('disabled');
-                var errors = this.flattenErrors(response.errors);
+                var errors = this.flattenErrors(response.data.errors);
                 Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n"));
               }
             })
@@ -147,15 +147,15 @@
 
           Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-single', { data })
             .then((response) => {
-              if (response.success) {
+              if (response.data.success) {
                 Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize started.'));
                 setTimeout(function () {
                   location.href = Craft.getUrl('mediamanager/entries/');
                 }, 1000);
               }
-              else if (response.errors) {
+              else if (response.data.errors) {
                 $('#synchronize-single-button').removeClass('disabled');
-                var errors = this.flattenErrors(response.errors);
+                var errors = this.flattenErrors(response.data.errors);
                 Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n"));
               }
             })
@@ -185,15 +185,15 @@
 
         Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-all', data)
           .then((response) => {
-            if (response.success) {
+            if (response.data.success) {
               Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize for all show started.'));
               setTimeout(function () {
                 location.href = Craft.getUrl('mediamanager/entries/');
               }, 1000);
             }
-            else if (response.errors) {
+            else if (response.data.errors) {
               $('#synchronize-all-button').removeClass('disabled');
-              var errors = this.flattenErrors(response.errors);
+              var errors = this.flattenErrors(response.data.errors);
               Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n"));
             }
           })
@@ -217,15 +217,15 @@
 
         Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-show-entries', data)
           .then((response) => {
-            if (response.success) {
+            if (response.data.success) {
               Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize for show entries started.'));
               setTimeout(function () {
                 location.href = Craft.getUrl('mediamanager/entries/');
               }, 1000);
             }
-            else if (response.errors) {
+            else if (response.data.errors) {
               $('#synchronize-show-entries-button').removeClass('disabled');
-              var errors = this.flattenErrors(response.errors);
+              var errors = this.flattenErrors(response.data.errors);
               Craft.cp.displayError(Craft.t('mediamanager', 'Could not start synchronize:') + "\n\n" + errors.join("\n"));
             }
           })
