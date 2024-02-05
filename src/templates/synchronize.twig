@@ -16,7 +16,7 @@
 {% endfor %}
 
 {% set validatedShows = 0 %}
-{% if shows | length %}
+{% if shows|length %}
     {% for show in shows %}
         {% if show.apiKey %}
             {% set validatedShows = validatedShows + 1 %}
@@ -26,31 +26,31 @@
 
 {% block sidebar %}
     {% if craft.mediaManagerReady() %}
-        {% if shows | length %}
+        {% if shows|length %}
         <nav>
             <ul id="shows">
                 <li class="heading"><span>Media Entries</span></li>
                 <li>
-                    <a data-id="sync-all" href="{{ url(pluginCpUrl) ~ '/synchronize/all' }}" {% if activeShow | length and activeShow.id == 'all' %}class="sel"{% endif %}>Synchronize All Shows</a>
+                    <a data-id="sync-all" href="{{ url('mediamanager/synchronize/all')  }}" {% if activeShow | length and activeShow.id == 'all' %}class="sel"{% endif %}>Synchronize All Shows</a>
                 </li>
                 <li>
-                    <a data-id="sync-single" href="{{ url(pluginCpUrl) ~ '/synchronize/single' }}" {% if activeShow | length and activeShow.id == 'single' %}class="sel"{% endif %}>Synchronize Single Media</a>
+                    <a data-id="sync-single" href="{{ url('mediamanager/synchronize/single') }}" {% if activeShow | length and activeShow.id == 'single' %}class="sel"{% endif %}>Synchronize Single Media</a>
                 </li>
                 {% for show in shows %}
                     <li>
-                        <a data-id="{{ show.id }}" href="{{ url(pluginCpUrl) ~ '/synchronize/' ~ show.id }}" {% if activeShow | length and activeShow.id == show.id %}class="sel"{% endif %}>{{ show.name }}</a>
+                        <a data-id="{{ show.id }}" href="{{ url('mediamanager/synchronize/' ~ show.id) }}" {% if activeShow | length and activeShow.id == show.id %}class="sel"{% endif %}>{{ show.name }}</a>
                     </li>
                 {% endfor %}
                 <li class="heading"><span>Show Entries</span></li>
                 <li>
-                    <a data-id="sync-all" href="{{ url(pluginCpUrl) ~ '/synchronize/show-entries' }}" {% if activeShow | length and activeShow.id == 'show-entries' %}class="sel"{% endif %}>Synchronize Show Entries</a>
+                    <a data-id="sync-all" href="{{ url('mediamanager/synchronize/show-entries') }}" {% if activeShow | length and activeShow.id == 'show-entries' %}class="sel"{% endif %}>Synchronize Show Entries</a>
                 </li>
             </ul>
         </nav>
         {% endif %}
 
         <div class="buttons">
-            <a href="{{ pluginCpUrl }}/shows" id="manageshowbtn" class="btn " tabindex="0">Manage show</a>
+            <a href="{{ url('mediamanager/shows') }}" id="manageshowbtn" class="btn " tabindex="0">Manage show</a>
         </div>
     {% endif %}
 {% endblock %}
@@ -67,6 +67,19 @@
                     {% set apiColumnFields = craft.app.getPlugins().getPlugin( 'mediamanager' ).getSettings().apiColumnFields %}
 
                     <div class="field first" id="group-field">
+                        <div class="heading">
+                            <label id="group-label" for="group">Synchronize All Show : {{ validatedShows }} valid show{{ validatedShows > 1 ? 's' : '' }} available to sync</label><br><br>
+                        </div>
+
+                        {% if validatedShows | length %}
+                        <ol>
+                            {% for show in shows %}
+                                {% if show.apiKey %}
+                                    <li>{{ show.name }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol><br/>
+                        {% endif %}
 
                         {{ forms.checkboxField({
                             first: false,
@@ -185,6 +198,15 @@
                         options: fieldsToSyncMap,
                         values: '*',
                         instructions: 'Choose which fields you would like to be updated during this sync.',
+                    {{ forms.selectField({
+                        first: false,
+                        label: "Media Asset's Site",
+                        instructions: "Site associated with this media asset."|t('media-manager'),
+                        id: 'siteId',
+                        name: 'siteId[]',
+                        options: siteGroups,
+                        value: activeShow.siteId,
+                        required: true,
                     }) }}
 
                     <div id="synchronize-single-button" class="btn submit" tabindex="1">{{ 'Update Media'|t('media-manager') }}</div>
@@ -296,10 +318,10 @@
                     {% else %}
                         {% if not activeShow.id and not activeShow.apiKey and not activeShow.name and not activeShow.siteId %}
                             Nothing to see here, you might want to create New Show first. <br/><br/>
-                            <a href="{{ url(pluginCpUrl) ~ '/shows/' }}" class="btn submit">Create New Show</a>
+                            <a href="{{ url('mediamanager/shows/') }}" class="btn submit">Create New Show</a>
                         {% else %}
                             To start Synchronize, you need to set a valid API ID for <strong>{{ activeShow.name }}</strong> first. <br/><br/>
-                            <a href="{{ url(pluginCpUrl) ~ '/shows/' ~ activeShow.id }}" class="btn submit">Set API Key Now</a>
+                            <a href="{{ url('mediamanager/shows/' ~ activeShow.id) }}" class="btn submit">Set API Key Now</a>
                         {% endif %}
                     {% endif %}
             {% endswitch %}
