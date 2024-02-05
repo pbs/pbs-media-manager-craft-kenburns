@@ -1,7 +1,7 @@
 {
   "name": "moon/pbs-media-manager-craft-kenburns",
-  "description": "Media Manager 3 for PBS API",
-  "version": "3.3.4.3",
+  "description": "Media Manager 4 for PBS API",
+  "version": "4.0.0-beta.1",
   "type": "craft-plugin",
   "keywords": ["craftcms", "pbs", "media-manager"],
   "license": "MIT",
