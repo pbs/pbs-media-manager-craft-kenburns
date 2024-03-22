@@ -202,7 +202,7 @@ class ShowApiColumnFieldsHelper
                 if( method_exists( 'ElementHelper', 'generateSlug' ) ) {
                     $tagGroupHandle = ElementHelper::generateSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 } else {
-                    $tagGroupHandle = ElementHelper::createSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
+                    $tagGroupHandle = ElementHelper::normalizeSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 }
 
                 // Find tag group first
@@ -229,8 +229,11 @@ class ShowApiColumnFieldsHelper
                 $fieldInformation[ 'type' ]   = Tags::class;
                 $fieldInformation[ 'source' ] = 'taggroup:' . $tagGroupUid;
             break;
+            case 'craft\ckeditor\Field':
+                $fieldInformation[ 'type' ] = "craft\ckeditor\Field";
+            break;
         }
-
+        
         return $fieldInformation;
     }
 

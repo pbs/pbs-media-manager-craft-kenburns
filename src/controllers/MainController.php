@@ -34,7 +34,7 @@ class MainController extends Controller
     // =========================================================================
     protected const INDEX_TEMPLATE_PATH          = 'mediamanager/index';
     protected const ENTRIES_TEMPLATE_PATH        = 'mediamanager/entries';
-    protected $allowAnonymous                    = [ 'index', 'entries' ];
+    protected array|int|bool $allowAnonymous                    = [ 'index', 'entries' ];
 
     // Public Methods
     // =========================================================================

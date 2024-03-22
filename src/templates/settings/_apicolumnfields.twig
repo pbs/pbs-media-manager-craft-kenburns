@@ -48,6 +48,9 @@
         addRowLabel: 'Add a field',
         rows: settings.apiColumnFields,
         errors: settings.getErrors( 'apiColumnFields' ),
+        allowAdd: true,
+        allowReorder: true,
+        allowDelete: true,
         cols: [
             {
                 heading: 'API Field',
@@ -95,7 +98,8 @@
                 type: 'select',
                 options: [
                     {"label":"— Select Field Type —"},
-                    {"value":"craft\\fields\\Assets","label":"Assets"},{"value":"craft\\fields\\Date","label":"Date/Time"},{"value":"craft\\fields\\Lightswitch","label":"Lightswitch"},{"value":"craft\\fields\\PlainText","label":"Plain Text"},{"value":"craft\\redactor\\Field","label":"Redactor"},{"value":"craft\\fields\\Tags","label":"Tags"}
+                    {"value":"craft\\fields\\Assets","label":"Assets"},{"value":"craft\\fields\\Date","label":"Date/Time"},{"value":"craft\\fields\\Lightswitch","label":"Lightswitch"},{"value":"craft\\fields\\PlainText","label":"Plain Text"},{"value":"craft\\redactor\\Field","label":"Redactor"},
+                    {"value":"craft\\ckeditor\\Field","label":"CKEditor"},{"value":"craft\\fields\\Tags","label":"Tags"}
                 ]
             }
         ]
@@ -112,6 +116,9 @@
         addRowLabel: 'Add a field',
         rows: settings.showApiColumnFields,
         errors: settings.getErrors( 'showApiColumnFields' ),
+        allowAdd: true,
+        allowReorder: true,
+        allowDelete: true,
         cols: [
             {
                 heading: 'API Field',
@@ -214,7 +221,8 @@
                 type: 'select',
                 options: [
                     {"label":"— Select Field Type —"},
-                    {"value":"craft\\fields\\Assets","label":"Assets"},{"value":"craft\\fields\\Date","label":"Date/Time"},{"value":"craft\\fields\\Lightswitch","label":"Lightswitch"},{"value":"craft\\fields\\PlainText","label":"Plain Text"},{"value":"craft\\redactor\\Field","label":"Redactor"},{"value":"craft\\fields\\Tags","label":"Tags"}
+                    {"value":"craft\\fields\\Assets","label":"Assets"},{"value":"craft\\fields\\Date","label":"Date/Time"},{"value":"craft\\fields\\Lightswitch","label":"Lightswitch"},{"value":"craft\\fields\\PlainText","label":"Plain Text"},{"value":"craft\\redactor\\Field","label":"Redactor"},
+                    {"value":"craft\\ckeditor\\Field","label":"CKEditor"},{"value":"craft\\fields\\Tags","label":"Tags"}
                 ]
             }
         ]

@@ -14,6 +14,7 @@ use Craft;
 use Exception;
 
 use papertiger\mediamanager\base\ConstantAbstract;
+use papertiger\mediamanager\MediaManager;
 
 class DependencyHelper
 {
@@ -21,8 +22,8 @@ class DependencyHelper
     // =========================================================================
     
     public static function installDependencies()
-    {   
-        self::_installCraftRedactorPlugin();
+    {
+        self::_installCraftRichtextPlugin();
     }
 
 
@@ -59,13 +60,24 @@ class DependencyHelper
         return false;
     }
 
-    private static function _installCraftRedactorPlugin()
+    private static function _installCraftRichtextPlugin(): void
     {
-        $pluginHandle = ConstantAbstract::DEPENDENCY_PLUGIN_CRAFT_REDACTOR_HANDLE;
-
-        if( !self::checkPluginExists( $pluginHandle ) ) {
-            Craft::$app->getComposer()->install( [ ConstantAbstract::DEPENDENCY_PLUGIN_CRAFT_REDACTOR_PACKAGE => ConstantAbstract::DEPENDENCY_PLUGIN_CRAFT_REDACTOR_VERSION ] );
+        $allowableRichtextPlugins = ConstantAbstract::DEPENDENCY_PLUGIN_CRAFT_RICHTEXT_PLUGINS;
+				
+        $hasAllowablePluginInstalled = collect($allowableRichtextPlugins)->first(function($plugin, $key){
+                return self::checkPluginExists($plugin['handle']);
+        });
+        
+        if($hasAllowablePluginInstalled) {
+            $plugin = MediaManager::getInstance();
+            $plugin->settings->defaultRichtextField = $hasAllowablePluginInstalled;
+            
+            return;
         }
+        
+        $defaultPlugin = ConstantAbstract::DEFAULT_RICHTEXT_TYPE;
+        $pluginHandle = $defaultPlugin['handle'];
+	      Craft::$app->getComposer()->install( [ $defaultPlugin['handle'] => $defaultPlugin['version'] ] );
 
         if( self::checkPluginDisabled( $pluginHandle ) && Craft::$app->getPlugins()->getStoredPluginInfo( $pluginHandle ) ) {
             

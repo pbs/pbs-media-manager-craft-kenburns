@@ -42,12 +42,12 @@ class SettingsModel extends Model
     public $syncSchedule        = ConstantAbstract::SYNC_SCHEDULE;
     public $syncCustomSchedule  = ConstantAbstract::SYNC_CUSTOM_SCHEDULE;
     public $syncPingChangelog   = ConstantAbstract::SYNC_PING_CHANGELOG;
-
+    public $defaultRichtextField = ConstantAbstract::DEFAULT_RICHTEXT_TYPE;
 
     // Public Methods
     // =========================================================================
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [

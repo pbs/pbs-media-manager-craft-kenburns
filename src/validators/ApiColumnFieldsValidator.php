@@ -51,9 +51,9 @@ class ApiColumnFieldsValidator extends Validator
             }
         }
 
-        if( count( $checkFieldApis ) != count( array_unique( $checkFieldApis ) ) ) {
-            $this->addError( $model, $attribute, 'Special Field on API Field need only to be used once.' );
-        }
+        // if( count( $checkFieldApis ) != count( array_unique( $checkFieldApis ) ) ) {
+        //     $this->addError( $model, $attribute, 'Special Field on API Field need only to be used once.' );
+        // }
 
         // Check if any duplication on fieldHandle
         if( count( $fieldHandles ) != count( array_unique( $fieldHandles ) ) ) {

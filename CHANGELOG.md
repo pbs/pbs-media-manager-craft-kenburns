@@ -1,11 +1,20 @@
 # Changelog
 
-## 3.3.4.3 = 2024-02-01
+## 4.0.0 - 2024-03-22
+- Stable Craft 4 release
+
+## 4.0.0-beta.1 - 2024-02-05
+
+- adds support for Craft 4
+- update control panel template button listener JS functionality
+- add support for alternative rich text plugins, namely CK Editor
+
+## 3.3.4.3 - 2024-02-01
 
 ### Changed
 - ScheduledSyncController console command has been renamed to ScheduleController to align with the naming convention of the GA MM plugin.
 
-## 3.3.4.2 = 2023-12-13
+## 3.3.4.2 - 2023-12-13
 ### Fixed
 - Fix show availability sync that was including assets like clips and trailers when determining a show's public availability
 

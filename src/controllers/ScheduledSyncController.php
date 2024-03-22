@@ -22,7 +22,7 @@
 	class ScheduledSyncController extends Controller
 	{
 		
-		protected $allowAnonymous = [];
+		protected array|int|bool $allowAnonymous = [];
 		
 		public function actionIndex(): Response
 		{

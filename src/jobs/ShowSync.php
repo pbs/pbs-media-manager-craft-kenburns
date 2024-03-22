@@ -49,7 +49,7 @@
 		// Public Methods
 		// =========================================================================
 		
-		public function execute( $queue )
+		public function execute( $queue ): void
 		{
 			$show = $this->_getShow();
 			$scheduledSync = MediaManager::getInstance()->scheduledSync->getScheduledSyncById($this->scheduledSync);

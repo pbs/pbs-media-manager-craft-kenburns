@@ -137,7 +137,9 @@ class ApiColumnFieldsHelper
 
             $fieldInformation = self::craftFieldInformation( $field );
             $fieldInformation[ 'id' ] = $existingField->id;
-
+            if(!isset($existingField->type)) {
+                $fieldInformation['type'] = end($field);
+            }
             $field = Craft::$app->getFields()->createField( $fieldInformation );
             Craft::$app->getFields()->saveField( $field );
         }
@@ -202,7 +204,7 @@ class ApiColumnFieldsHelper
                 if( method_exists( 'ElementHelper', 'generateSlug' ) ) {
                     $tagGroupHandle = ElementHelper::generateSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 } else {
-                    $tagGroupHandle = ElementHelper::createSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
+                    $tagGroupHandle = ElementHelper::normalizeSlug( $field[ ConstantAbstract::API_COLUMN_FIELD_NAME_INDEX ] );
                 }
 
                 // Find tag group first
@@ -219,6 +221,15 @@ class ApiColumnFieldsHelper
                     $group->setFieldLayout( $fieldLayout );
 
                     Craft::$app->getTags()->saveTagGroup( $group );
+                    
+                    try {
+                        $fieldLayout = Craft::$app->getFields()->assembleLayoutFromPost();
+                        $fieldLayout->type = Tag::class;
+                        $group->setFieldLayout( $fieldLayout );
+                        Craft::$app->getTags()->saveTagGroup( $group );
+                    } catch( \Throwable $e ) {
+                        Craft::error( $e->getMessage(), __METHOD__ );
+                    }
 
                     $tagGroupUid = $group->uid;
 
