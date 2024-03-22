@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.0 - 2024-03-22
+- Stable Craft 4 release
+
 ## 4.0.0-beta.1 - 2024-02-05
 
 - adds support for Craft 4
