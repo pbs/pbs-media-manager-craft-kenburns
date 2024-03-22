@@ -108,7 +108,23 @@ class MediaSync extends BaseJob
             $availabilities  = $assetAttributes->availabilities;
 
             $existingEntry       = $this->findExistingMediaEntry( $mediaAsset->id );
-            $entry               = $this->chooseOrCreateMediaEntry( $assetAttributes->title, $existingEntry );
+            
+						// if all availabilities are null, early return
+            if( $availabilities->public->start === null && $availabilities->public->end === null &&
+								$availabilities->all_members->start === null && $availabilities->all_members->end === null &&
+								$availabilities->station_members->start === null && $availabilities->station_members->end === null
+							){
+								if($existingEntry){
+									$existingEntry->setFieldValue('markedForDeletion', true);
+									$existingEntry->enabled = 0;
+			            Craft::$app->getElements()->saveElement( $existingEntry );
+			            $this->setProgress( $queue, $count++ / $totalAssets );
+								}
+								
+								continue;
+							}
+						
+						$entry               = $this->chooseOrCreateMediaEntry( $assetAttributes->title, $existingEntry );
             $expirationStatus    = $this->determineExpirationStatus( $availabilities->public->end );
             $displayPassportIcon = $this->determinePassportStatus(
                 $availabilities->all_members->start,
@@ -392,7 +408,7 @@ class MediaSync extends BaseJob
 							$markForDeletion = 1;
 						}
 	          $entry->setFieldValue('markedForDeletion', $markForDeletion);
-            $entry->enabled = $this->isEntryEnabled( $availabilities->all_members->end );
+            $entry->enabled = $this->isEntryEnabled( $availabilities );
 
             Craft::$app->getElements()->saveElement( $entry );
             $this->setProgress( $queue, $count++ / $totalAssets );
@@ -711,17 +727,29 @@ class MediaSync extends BaseJob
         return $allMembersStart < $currentTime && $currentTime < $allMembersEnd;
     }
 
-    private function isEntryEnabled( $endDate )
+    private function isEntryEnabled($availabilities)
     {
-        // No $endDate, enabled it
-        if( !$endDate || $endDate === false ) {
+				// previous logic used $availabilities->all_members->end to calculate status
+        // now we will check if all start/end dates are null and if so set as disabled
+	      $public = $availabilities->public;
+				$allMembers = $availabilities->all_members;
+				$stationMembers = $availabilities->station_members;
+				
+				if( $public->start === null && $public->end === null &&
+						$allMembers->start === null && $allMembers->end === null &&
+						$stationMembers->start === null && $stationMembers->end === null
+					) {
+						return 0;
+				}
+				
+				$endDate = $allMembers->end;
+	      
+        if( $allMembers->start && !$endDate) {
             return 1;
         }
-
-        $endDate     = strtotime( $endDate );
-        $currentTime = strtotime( 'now' );
-
-        return ( $endDate > $currentTime ) ? 1 : 0;
+				
+        $currentTime = strtotime('now');
+        return (strtotime($endDate) > $currentTime) ? 1 : 0;
     }
 
     private function getMediaFolder()
