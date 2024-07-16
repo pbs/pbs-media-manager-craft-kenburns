@@ -145,7 +145,7 @@
 
           $('#synchronize-single-button').addClass('disabled');
 
-          Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-single', { data })
+          Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-single', { data: data })
             .then((response) => {
               if (response.data.success) {
                 Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize started.'));
@@ -183,7 +183,7 @@
           fieldsToSync: fieldsToSync,
         };
 
-        Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-all', data)
+        Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-all', { data: data})
           .then((response) => {
             if (response.data.success) {
               Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize for all show started.'));
@@ -214,8 +214,7 @@
         var data = {
           fieldsToSync: fieldsToSync,
         };
-
-        Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-show-entries', data)
+        Craft.sendActionRequest('POST', 'mediamanager/synchronize/synchronize-show-entries', {data: data})
           .then((response) => {
             if (response.data.success) {
               Craft.cp.displayNotice(Craft.t('mediamanager', 'Synchronize for show entries started.'));
