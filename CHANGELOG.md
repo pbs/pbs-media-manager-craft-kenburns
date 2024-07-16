@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.1 - 2024-07-16
+- Fix control panel Synchronize action requests, which were not properly sending form data to controller
+
 ## 4.0.0 - 2024-03-22
 - Stable Craft 4 release
 
