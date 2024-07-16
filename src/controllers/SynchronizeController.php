@@ -243,7 +243,7 @@ class SynchronizeController extends Controller
             ]);
         }
 	
-	      $fieldsToSync = $request->getBodyParam('fieldsToSync');
+	      $fieldsToSync = $request->getBodyParam('fieldsToSync', []);
 				
         $synchronize = MediaManager::getInstance()->api->synchronizeShowEntries( $validatedShows, $fieldsToSync);
 

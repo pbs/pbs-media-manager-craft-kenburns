@@ -12,7 +12,6 @@ namespace papertiger\mediamanager\controllers;
 
 use Craft;
 use craft\base\Element;
-use craft\helpers\Db;
 use craft\helpers\Queue;
 use craft\helpers\UrlHelper;
 use craft\elements\Entry;
@@ -39,21 +38,21 @@ class MainController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         return $this->renderTemplate( self::INDEX_TEMPLATE_PATH );
     }
 
-    public function actionEntries()
+    public function actionEntries(): Response
     {
         return $this->renderTemplate( self::ENTRIES_TEMPLATE_PATH );
     }
-
-    public function actionCancelMarkedForDeletion()
+		
+    public function actionCancelMarkedForDeletion(): Response
     {
 				$this->requireLogin();
         Queue::push((new CancelStaleMedia()));
-				
+
 				return $this->asJson('Unchecking items marked for deletion.');
     }
 }
