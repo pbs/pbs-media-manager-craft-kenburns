@@ -199,7 +199,7 @@
                         values: '*',
                         instructions: 'Choose which fields you would like to be updated during this sync.',
                     }) }}
-                    
+
                     {{ forms.selectField({
                         first: false,
                         label: "Media Asset's Site",
@@ -245,14 +245,23 @@
                             <label id="group-label" for="group">Synchronize Show Entries : {{ validatedShows }} valid show{{ validatedShows > 1 ? 's' : '' }} available to sync</label><br><br>
                         </div>
 
-                        {% if validatedShows | length %}
-                            <ol>
-                                {% for show in shows %}
-                                    {% if show.apiKey %}
-                                        <li>{{ show.name }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ol><br/>
+                        {% if validatedShows|length %}
+                            {% set showsToSync = [] %}
+                            {% for show in shows %}
+                                {% if show.apiKey %}
+                                    {% set showsToSync = showsToSync|merge({(show.apiKey): show.name}) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {{ forms.checkboxSelectField({
+                                id: 'showsToSync',
+                                name: 'showsToSync',
+                                label: 'Shows to Sync',
+                                showAllOption: true,
+                                options: showsToSync,
+                                values: '*',
+                                instructions: 'Choose which shows you would like to be updated during this sync.',
+                            }) }}
                         {% endif %}
                     </div>
 

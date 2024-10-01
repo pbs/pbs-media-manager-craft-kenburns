@@ -32,7 +32,7 @@ class SynchronizeController extends Controller
     
     protected const SYNCHRONIZE_TEMPLATE_PATH = 'mediamanager/synchronize';
     protected const CLEAN_TEMPLATE_PATH       = 'mediamanager/clean';
-    protected array|int|bool $allowAnonymous                 = [ 'index', 'all', 'single', 'synchronize' ];
+    protected array|int|bool $allowAnonymous  = [ 'index', 'all', 'single', 'synchronize' ];
 
 
     // Public Methods
@@ -226,12 +226,11 @@ class SynchronizeController extends Controller
         $validatedShows = [];
         $request = Craft::$app->getRequest();
 
-        foreach( $shows as $show ) {
-            
-            if( $show->apiKey && $show->name ) {
-                
-                $show[ 'siteId' ] = json_decode( $show[ 'siteId' ] );
-                array_push( $validatedShows, $show );
+        $showsToSync = $request->getBodyParam('showsToSync', []);
+        foreach($shows as $show) {
+            if($show->apiKey && $show->name && (collect($showsToSync)->search($show->apiKey) !== false)) {
+                $show['siteId'] = json_decode($show['siteId']);
+                $validatedShows[] = $show;
             }
         }
 

@@ -22,7 +22,7 @@
             <ul id="shows">
                 {% for show in shows %}
                     <li>
-                        <a data-id="{{ show.id }}" href="{{ url( pluginCpUrl ) ~ '/shows/' ~ show.id }}" {% if activeShow | length and activeShow.id == show.id %}class="sel"{% endif %}>{{ show.name }}</a>
+                        <a data-id="{{ show.id }}" href="{{ url( 'mediamanager/shows/' ~ show.id  )}}" {% if activeShow | length and activeShow.id == show.id %}class="sel"{% endif %}>{{ show.name }}</a>
                     </li>
                 {% endfor %}
             </ul>
