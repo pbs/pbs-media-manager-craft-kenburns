@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.2 - 2024-10-01
+- add ability to select what show entries to sync
+- fix URL issue on control panel Shows template
+- fix issue that was incorrectly tagging shows as being available to public (FVOD)
+
 ## 4.0.1 - 2024-07-16
 - Fix control panel Synchronize action requests, which were not properly sending form data to controller
 
