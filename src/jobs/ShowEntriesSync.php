@@ -188,16 +188,10 @@ class ShowEntriesSync extends BaseJob
                     }
                 break;
                 case 'description_long':
-                    // Only if new entry add description
-                    if( !$existingEntry ) {
-                        $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->description_long;
-                    }
+                    $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->description_long;
                 break;
                 case 'description_short':
-                    // Only if new entry add description
-                    if( !$existingEntry ) {
-                        $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->description_short;
-                    }
+                    $defaultFields[ SynchronizeHelper::getApiField( $apiField, 'showApiColumnFields' ) ] = $showAttributes->description_short;
                 break;
                 case 'premiered_on':
                     if( $showAttributes->premiered_on != null) {
