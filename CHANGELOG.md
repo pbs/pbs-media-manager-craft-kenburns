@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.4 - 2025-03-04
+- update shoe entries sync to include startDate when calculating show availability
+
 ## 4.0.3 - 2024-10-08
 - change show entries sync job to always sync long and short description fields
 
