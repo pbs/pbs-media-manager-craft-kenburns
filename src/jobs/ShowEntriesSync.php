@@ -364,16 +364,24 @@ class ShowEntriesSync extends BaseJob
                     continue;
                 }
 
+                $publicStartDate = $asset->attributes->availabilities->public->start ? new DateTime($asset->attributes->availabilities->public->start) : null;
                 $publicEndDate = $asset->attributes->availabilities->public->end ? new DateTime($asset->attributes->availabilities->public->end) : null;
+
+                $passportStartDate = $asset->attributes->availabilities->all_members->start ? new DateTime($asset->attributes->availabilities->all_members->start) : null;
                 $passportEndDate = $asset->attributes->availabilities->all_members->end ? new DateTime($asset->attributes->availabilities->all_members->end) : null;
 
-                if ($publicEndDate instanceof DateTime) {
+                if($publicStartDate && $publicEndDate){
+                    $availableToPublic = (DateTimeHelper::isInThePast($publicStartDate) && !DateTimeHelper::isInThePast($publicEndDate)) ? 1 : 0;
+                } elseif ($publicEndDate){
                     $availableToPublic = DateTimeHelper::isInThePast($publicEndDate) ? 0 : 1;
                 }
 
-                if ($passportEndDate instanceof DateTime) {
+                if($passportStartDate && $passportEndDate){
+                    $availableOnPassport = (DateTimeHelper::isInThePast($passportStartDate) && !DateTimeHelper::isInThePast($passportEndDate)) ? 1 : 0;
+                } elseif ($passportEndDate){
                     $availableOnPassport = DateTimeHelper::isInThePast($passportEndDate) ? 0 : 1;
                 }
+
             }
         }
 
